@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template
+from env.forms import ContactForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = b'\xeaF\x0b\xce\xee#9Z\xae\x0e\xbd\x98\x02T\xf7bU\xc7\xfe\xd6cg\x93\xda'
 
 
 @app.route("/about")
@@ -13,9 +15,20 @@ def blog():
     return render_template('blog.html')
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template('contact.html')
+    form = ContactForm()
+    if request == "POST":
+        name = form.name.data
+        email = form.email.data
+        subject = form.subject.data
+        message = form.message.data
+        print(name, email, message)
+
+        form.name.data, form.email.data, form.subject.data, form.message.data = "", "", "", ""
+
+        return render_template('contact.html', form=form, success=True)
+    return render_template('contact.html', form=form)
 
 
 @app.route("/destination")
