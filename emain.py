@@ -67,6 +67,11 @@ def guide():
 def index():
     return render_template('index.html')
 
+# to have the route as index route. This help without add /index to url to arrive on the homepage
+@app.route("/")
+def home():
+    return render_template('index.html')
+
 
 @app.route("/package")
 def package():
