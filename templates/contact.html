@@ -116,120 +116,120 @@
     <!-- Header End -->
 
 
-    <!-- Booking Start -->
-    <div class="container-fluid booking mt-5 pb-5">
-        <div class="container pb-5">
-            <div class="bg-light shadow" style="padding: 30px;">
+<!--    &lt;!&ndash; Booking Start &ndash;&gt;-->
+<!--    <div class="container-fluid booking mt-5 pb-5">-->
+<!--        <div class="container pb-5">-->
+<!--            <div class="bg-light shadow" style="padding: 30px;">-->
 
-                <form method="POST" action="{{  url_for('contact')  }}">
-                    {{ booking_form.hidden_tag() }}
-                    <div class="row align-items-center" style="min-height: 60px;">
-                        <div class="col-md-10">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="mb-3 mb-md-0">
-                                    <!-- <select class="custom-select px-4" style="height: 47px;"> -->
+<!--                <form method="POST" action="{{  url_for('contact')  }}">-->
+<!--                    {{ booking_form.hidden_tag() }}-->
+<!--                    <div class="row align-items-center" style="min-height: 60px;">-->
+<!--                        <div class="col-md-10">-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-md-3">-->
+<!--                                    <div class="mb-3 mb-md-0">-->
+<!--                                    &lt;!&ndash; <select class="custom-select px-4" style="height: 47px;"> &ndash;&gt;-->
 
-                                        {{ booking_form.destination(class='custom-select px-4', style='height: 47px;') }}
+<!--                                        {{ booking_form.destination(class='custom-select px-4', style='height: 47px;') }}-->
 
-                                        <option selected>Destination</option>
-                                        <option value="1">Aburi Botanical Gardens</option>
-                                        <option value="2">Accra Zoo</option>
-                                        <option value="3">Ada Foah Beach</option>
-                                        <option value="4">Ankasa Forest</option>
-                                        <option value="5">Bobiri Forest and Butterfly Sanctuary</option>
-                                        <option value="6">Boabeng Fiema Monkey Sanctuary</option>
-                                        <option value="7">Bunsu Arboretum</option>
-                                        <option value="8">Buoyam Caves</option>
-                                        <option value="9">Cape Coast Castle</option>
-                                        <option value="10">Cape Three Point</option>
-                                        <option value="11">Dubois Memorial Centre</option>
-                                        <option value="12">Elmina Castle</option>
-                                        <option value="13">Gemi Amedzofe(Mountain)</option>
-                                        <option value="14">Ghana Museum</option>
-                                        <option value="15">Kakum National Park</option>
-                                        <option value="16">Kintampo Waterfalls</option>
-                                        <option value="17">Kumasi Armed Forces Military Museum</option>
-                                        <option value="18">Kumasi Zoo</option>
-                                        <option value="19">Kyabobo National Park</option>
-                                        <option value="20">Manhyia Palace</option>
-                                        <option value="21">Mole National Park</option>
-                                        <option value="22">Mognori Eco Village</option>
-                                        <option value="23">Mountain Afadjato(Tagbo Waterfall)</option>
-                                        <option value="24">Nkrumah Memorial Park</option>
-                                        <option value="25">Nzulezu Stilt Village</option>
-                                        <option value="26">Obuasi Mine</option>
-                                        <option value="27">Okomfo Anokye Sword</option>
-                                        <option value="28">Paga Chief Pond</option>
-                                        <option value="29">Paga Zenga Crocodile Pond</option>
-                                        <option value="30">Pikworo Nania Slave Camp</option>
-                                        <option value="31">Prempeh Jubilee</option>
-                                        <option value="32">Shai Hills</option>
-                                        <option value="33">Sirigu Women Organisation for Pottery Art</option>
-                                        <option value="34">Tagbo Waterfall/Mountain Afadjato</option>
-                                        <option value="35">Tafi Atome Monkey Sanctuary</option>
-                                        <option value="36">Tango Hills/Tingzag Shrine</option>
-                                        <option value="37">Tano Boase Sacred Grove</option>
-                                        <option value="38">Wassa Domama Roch Shrine</option>
-                                        <option value="39">Wechiau Hippo Sanctuary</option>
-                                        <option value="40">Wli Waterfalls</option>
-                                        <option value="41">Xavi Bird Sanctuary</option>
-                                        <option value="42">Destination 1</option>
-                                        <option value="43">Destination 1</option>
-                                        <option value="44">Destination 1</option>
-                                        <option value="45">Destination 1</option>
-                                        <option value="46">Destination 1</option>
-                                        <option value="47">Destination 1</option>
-                                        <option value="48">Destination 1</option>
-                                        <option value="49">Destination 1</option>
-                                        <option value="50">Destination 1</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    {{ booking_form.depart_date(class='form-control p-4 datetimepicker-input' 'date', id="date1", placeholder='Depart Date') }}
-<!--                                    <div class="date" id="date1" data-target-input="nearest">-->
-
-<!--                                        &lt;!&ndash; <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/> &ndash;&gt;-->
+<!--                                        <option selected>Destination</option>-->
+<!--                                        <option value="1">Aburi Botanical Gardens</option>-->
+<!--                                        <option value="2">Accra Zoo</option>-->
+<!--                                        <option value="3">Ada Foah Beach</option>-->
+<!--                                        <option value="4">Ankasa Forest</option>-->
+<!--                                        <option value="5">Bobiri Forest and Butterfly Sanctuary</option>-->
+<!--                                        <option value="6">Boabeng Fiema Monkey Sanctuary</option>-->
+<!--                                        <option value="7">Bunsu Arboretum</option>-->
+<!--                                        <option value="8">Buoyam Caves</option>-->
+<!--                                        <option value="9">Cape Coast Castle</option>-->
+<!--                                        <option value="10">Cape Three Point</option>-->
+<!--                                        <option value="11">Dubois Memorial Centre</option>-->
+<!--                                        <option value="12">Elmina Castle</option>-->
+<!--                                        <option value="13">Gemi Amedzofe(Mountain)</option>-->
+<!--                                        <option value="14">Ghana Museum</option>-->
+<!--                                        <option value="15">Kakum National Park</option>-->
+<!--                                        <option value="16">Kintampo Waterfalls</option>-->
+<!--                                        <option value="17">Kumasi Armed Forces Military Museum</option>-->
+<!--                                        <option value="18">Kumasi Zoo</option>-->
+<!--                                        <option value="19">Kyabobo National Park</option>-->
+<!--                                        <option value="20">Manhyia Palace</option>-->
+<!--                                        <option value="21">Mole National Park</option>-->
+<!--                                        <option value="22">Mognori Eco Village</option>-->
+<!--                                        <option value="23">Mountain Afadjato(Tagbo Waterfall)</option>-->
+<!--                                        <option value="24">Nkrumah Memorial Park</option>-->
+<!--                                        <option value="25">Nzulezu Stilt Village</option>-->
+<!--                                        <option value="26">Obuasi Mine</option>-->
+<!--                                        <option value="27">Okomfo Anokye Sword</option>-->
+<!--                                        <option value="28">Paga Chief Pond</option>-->
+<!--                                        <option value="29">Paga Zenga Crocodile Pond</option>-->
+<!--                                        <option value="30">Pikworo Nania Slave Camp</option>-->
+<!--                                        <option value="31">Prempeh Jubilee</option>-->
+<!--                                        <option value="32">Shai Hills</option>-->
+<!--                                        <option value="33">Sirigu Women Organisation for Pottery Art</option>-->
+<!--                                        <option value="34">Tagbo Waterfall/Mountain Afadjato</option>-->
+<!--                                        <option value="35">Tafi Atome Monkey Sanctuary</option>-->
+<!--                                        <option value="36">Tango Hills/Tingzag Shrine</option>-->
+<!--                                        <option value="37">Tano Boase Sacred Grove</option>-->
+<!--                                        <option value="38">Wassa Domama Roch Shrine</option>-->
+<!--                                        <option value="39">Wechiau Hippo Sanctuary</option>-->
+<!--                                        <option value="40">Wli Waterfalls</option>-->
+<!--                                        <option value="41">Xavi Bird Sanctuary</option>-->
+<!--                                        <option value="42">Destination 1</option>-->
+<!--                                        <option value="43">Destination 1</option>-->
+<!--                                        <option value="44">Destination 1</option>-->
+<!--                                        <option value="45">Destination 1</option>-->
+<!--                                        <option value="46">Destination 1</option>-->
+<!--                                        <option value="47">Destination 1</option>-->
+<!--                                        <option value="48">Destination 1</option>-->
+<!--                                        <option value="49">Destination 1</option>-->
+<!--                                        <option value="50">Destination 1</option>-->
+<!--                                        </select>-->
 <!--                                    </div>-->
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    {{ booking_form.return_date(class='form-control p-4 datetimepicker-input', placeholder='Return Date') }}
-<!--                                    <div class="date" id="date2" data-target-input="nearest">-->
+<!--                                </div>-->
+<!--                            <div class="col-md-3">-->
+<!--                                <div class="mb-3 mb-md-0">-->
+<!--                                    {{ booking_form.depart_date(class='form-control p-4 datetimepicker-input' 'date', id="date1", placeholder='Depart Date') }}-->
+<!--&lt;!&ndash;                                    <div class="date" id="date1" data-target-input="nearest">&ndash;&gt;-->
 
-<!--                                        &lt;!&ndash; <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Return Date" data-target="#date2" data-toggle="datetimepicker"/> &ndash;&gt;-->
-<!--                                    </div>-->
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    {{ booking_form.duration(class='custom-select px-4', style='height: 47px;') }}
+<!--&lt;!&ndash;                                        &lt;!&ndash; <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-3">-->
+<!--                                <div class="mb-3 mb-md-0">-->
+<!--                                    {{ booking_form.return_date(class='form-control p-4 datetimepicker-input', placeholder='Return Date') }}-->
+<!--&lt;!&ndash;                                    <div class="date" id="date2" data-target-input="nearest">&ndash;&gt;-->
 
-<!--                                    <select class="custom-select px-4" style="height: 47px;">-->
+<!--&lt;!&ndash;                                        &lt;!&ndash; <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Return Date" data-target="#date2" data-toggle="datetimepicker"/> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-md-3">-->
+<!--                                <div class="mb-3 mb-md-0">-->
+<!--                                    {{ booking_form.duration(class='custom-select px-4', style='height: 47px;') }}-->
 
-<!--                                        <option selected>Duration</option>-->
-<!--                                        <option value="1">Duration 1</option>-->
-<!--                                        <option value="2">Duration 1</option>-->
-<!--                                        <option value="3">Duration 1</option>-->
-<!--                                    </select>-->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        {{ booking_form.submit(class='btn btn-primary btn-block', style='height: 47px; margin-top: -2px;') }}
+<!--&lt;!&ndash;                                    <select class="custom-select px-4" style="height: 47px;">&ndash;&gt;-->
 
-<!--                         <button class="btn btn-primary btn-block" type="submit" style="height: 47px; margin-top: -2px;">Submit</button>-->
-                    </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- Booking End -->
+<!--&lt;!&ndash;                                        <option selected>Duration</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <option value="1">Duration 1</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <option value="2">Duration 1</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <option value="3">Duration 1</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </select>&ndash;&gt;-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col-md-2">-->
+<!--                        {{ booking_form.submit(class='btn btn-primary btn-block', style='height: 47px; margin-top: -2px;') }}-->
+
+<!--&lt;!&ndash;                         <button class="btn btn-primary btn-block" type="submit" style="height: 47px; margin-top: -2px;">Submit</button>&ndash;&gt;-->
+<!--                    </div>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; Booking End &ndash;&gt;-->
 
     <!--    Map Start-->
     <div style="text-align: center; margin-top: 50px;">
