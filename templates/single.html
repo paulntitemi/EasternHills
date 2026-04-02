@@ -9,7 +9,7 @@
     <meta content="Free HTML Templates" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <link href="/static/img/logo.jpg" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -19,8 +19,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="/static/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/static/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="/static/css/style.css" rel="stylesheet">
@@ -119,96 +119,53 @@
     <div class="container-fluid booking mt-5 pb-5">
         <div class="container pb-5">
             <div class="bg-light shadow" style="padding: 30px;">
-                <div class="row align-items-center" style="min-height: 60px;">
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <select class="custom-select px-4" style="height: 47px;">
-                                        <option selected>Destination</option>
-                                        <option value="1">Aburi Botanical Gardens</option>
-                                        <option value="2">Accra Zoo</option>
-                                        <option value="3">Ada Foah Beach</option>
-                                        <option value="4">Ankasa Forest</option>
-                                        <option value="5">Bobiri Forest and Butterfly Sanctuary</option>
-                                        <option value="6">Boabeng Fiema Monkey Sanctuary</option>
-                                        <option value="7">Bunsu Arboretum</option>
-                                        <option value="8">Buoyam Caves</option>
-                                        <option value="9">Cape Coast Castle</option>
-                                        <option value="10">Cape Three Point</option>
-                                        <option value="11">Dubois Memorial Centre</option>
-                                        <option value="12">Elmina Castle</option>
-                                        <option value="13">Gemi Amedzofe(Mountain)</option>
-                                        <option value="14">Ghana Museum</option>
-                                        <option value="15">Kakum National Park</option>
-                                        <option value="16">Kintampo Waterfalls</option>
-                                        <option value="17">Kumasi Armed Forces Military Museum</option>
-                                        <option value="18">Kumasi Zoo</option>
-                                        <option value="19">Kyabobo National Park</option>
-                                        <option value="20">Manhyia Palace</option>
-                                        <option value="21">Mole National Park</option>
-                                        <option value="22">Mognori Eco Village</option>
-                                        <option value="23">Mountain Afadjato(Tagbo Waterfall)</option>
-                                        <option value="24">Nkrumah Memorial Park</option>
-                                        <option value="25">Nzulezu Stilt Village</option>
-                                        <option value="26">Obuasi Mine</option>
-                                        <option value="27">Okomfo Anokye Sword</option>
-                                        <option value="28">Paga Chief Pond</option>
-                                        <option value="29">Paga Zenga Crocodile Pond</option>
-                                        <option value="30">Pikworo Nania Slave Camp</option>
-                                        <option value="31">Prempeh Jubilee</option>
-                                        <option value="32">Shai Hills</option>
-                                        <option value="33">Sirigu Women Organisation for Pottery Art</option>
-                                        <option value="34">Tagbo Waterfall/Mountain Afadjato</option>
-                                        <option value="35">Tafi Atome Monkey Sanctuary</option>
-                                        <option value="36">Tango Hills/Tingzag Shrine</option>
-                                        <option value="37">Tano Boase Sacred Grove</option>
-                                        <option value="38">Wassa Domama Roch Shrine</option>
-                                        <option value="39">Wechiau Hippo Sanctuary</option>
-                                        <option value="40">Wli Waterfalls</option>
-                                        <option value="41">Xavi Bird Sanctuary</option>
-                                        <option value="42">Destination 1</option>
-                                        <option value="43">Destination 1</option>
-                                        <option value="44">Destination 1</option>
-                                        <option value="45">Destination 1</option>
-                                        <option value="46">Destination 1</option>
-                                        <option value="47">Destination 1</option>
-                                        <option value="48">Destination 1</option>
-                                        <option value="49">Destination 1</option>
-                                        <option value="50">Destination 1</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <div class="date" id="date1" data-target-input="nearest">
-                                        <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <div class="date" id="date2" data-target-input="nearest">
-                                        <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Return Date" data-target="#date2" data-toggle="datetimepicker"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <select class="custom-select px-4" style="height: 47px;">
-                                        <option selected>Duration</option>
-                                        <option value="1">Duration 1</option>
-                                        <option value="2">Duration 1</option>
-                                        <option value="3">Duration 1</option>
-                                    </select>
-                                </div>
+                {% with messages = get_flashed_messages(category_filter=['booking_success']) %}
+                {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=['booking_error']) %}
+                {% if messages %}
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+                {% endwith %}
+                <form method="POST" action="/book">
+                    {{ booking_form.hidden_tag() }}
+                    <div class="row align-items-center" style="min-height: 60px;">
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.destination(class='custom-select px-4', style='height: 47px;') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="date" id="date1" data-target-input="nearest">
+                                <input type="text" name="depart_date" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/>
                             </div>
                         </div>
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.travellers(class='form-control px-4', style='height: 47px;', placeholder='Number of Travellers', min='1', max='50') }}
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary btn-block" type="submit" style="height: 47px; margin-top: -2px;">Submit</button>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.full_name(class='form-control px-4', style='height: 47px;', placeholder='Full Name') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.phone(class='form-control px-4', style='height: 47px;', placeholder='Phone / WhatsApp') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Book Now</button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -237,44 +194,15 @@
                                 <span class="text-primary px-2">|</span>
                                 <a class="text-primary text-uppercase text-decoration-none" href="">Tours & Travel</a>
                             </div>
-                            <h2 class="mb-3">Dolor justo sea kasd lorem clita justo diam amet</h2>
-                            <p>Sadipscing labore amet rebum est et justo gubergren. Et eirmod ipsum sit diam ut
-                                magna lorem. Nonumy vero labore lorem sanctus rebum et lorem magna kasd, stet
-                                amet magna accusam consetetur eirmod. Kasd accusam sit ipsum sadipscing et at at
-                                sanctus et. Ipsum sit gubergren dolores et, consetetur justo invidunt at et
-                                aliquyam ut et vero clita. Diam sea sea no sed dolores diam nonumy, gubergren
-                                sit stet no diam kasd vero.</p>
-                            <p>Voluptua est takimata stet invidunt sed rebum nonumy stet, clita aliquyam dolores
-                                vero stet consetetur elitr takimata rebum sanctus. Sit sed accusam stet sit
-                                nonumy kasd diam dolores, sanctus lorem kasd duo dolor dolor vero sit et. Labore
-                                ipsum duo sanctus amet eos et. Consetetur no sed et aliquyam ipsum justo et,
-                                clita lorem sit vero amet amet est dolor elitr, stet et no diam sit. Dolor erat
-                                justo dolore sit invidunt.</p>
-                            <h4 class="mb-3">Est dolor lorem et ea</h4>
+                            <h2 class="mb-3">Why Kakum National Park Should Be Your Next Adventure</h2>
+                            <p>Kakum National Park, nestled in the Central Region of Ghana, is one of West Africa's most treasured rainforests. Spanning over 375 square kilometres of pristine tropical forest, it is home to a stunning variety of wildlife, rare plant species, and one of the continent's most famous attractions — the canopy walkway.</p>
+                            <p>The park was established in 1931 as a forest reserve and later upgraded to a national park in 1992. Today, it attracts thousands of visitors each year, from adventure seekers walking 40 metres above the forest floor to birdwatchers hoping to spot some of the 266 bird species recorded within the park's boundaries.</p>
+                            <h4 class="mb-3">The Canopy Walkway Experience</h4>
                             <img class="img-fluid w-50 float-left mr-4 mb-2" src="/static/img/blog-2.jpg">
-                            <p>Diam dolor est labore duo invidunt ipsum clita et, sed et lorem voluptua tempor
-                                invidunt at est sanctus sanctus. Clita dolores sit kasd diam takimata justo diam
-                                lorem sed. Magna amet sed rebum eos. Clita no magna no dolor erat diam tempor
-                                rebum consetetur, sanctus labore sed nonumy diam lorem amet eirmod. No at tempor
-                                sea diam kasd, takimata ea nonumy elitr sadipscing gubergren erat. Gubergren at
-                                lorem invidunt sadipscing rebum sit amet ut ut, voluptua diam dolores at
-                                sadipscing stet. Clita dolor amet dolor ipsum vero ea ea eos. Invidunt sed diam
-                                dolores takimata dolor dolore dolore sit. Sit ipsum erat amet lorem et, magna
-                                sea at sed et eos. Accusam eirmod kasd lorem clita sanctus ut consetetur et. Et
-                                duo tempor sea kasd clita ipsum et.</p>
-                            <h5 class="mb-3">Est dolor lorem et ea</h5>
+                            <p>The highlight of any visit to Kakum is undoubtedly the canopy walkway — a series of seven suspension bridges stretching 350 metres through the treetops. Suspended 40 metres above the forest floor, the walkway offers breathtaking views of the forest canopy and a unique perspective on the ecosystem below. Early morning visits are recommended for the best wildlife sightings, as the forest comes alive with birdsong and the occasional glimpse of monkeys swinging through the branches. Our guides are trained naturalists who can identify species by their calls and help you spot creatures that most visitors would miss entirely.</p>
+                            <h5 class="mb-3">Planning Your Visit</h5>
                             <img class="img-fluid w-50 float-right ml-4 mb-2" src="/static/img/blog-3.jpg">
-                            <p>Diam dolor est labore duo invidunt ipsum clita et, sed et lorem voluptua tempor
-                                invidunt at est sanctus sanctus. Clita dolores sit kasd diam takimata justo diam
-                                lorem sed. Magna amet sed rebum eos. Clita no magna no dolor erat diam tempor
-                                rebum consetetur, sanctus labore sed nonumy diam lorem amet eirmod. No at tempor
-                                sea diam kasd, takimata ea nonumy elitr sadipscing gubergren erat. Gubergren at
-                                lorem invidunt sadipscing rebum sit amet ut ut, voluptua diam dolores at
-                                sadipscing stet. Clita dolor amet dolor ipsum vero ea ea eos. Invidunt sed diam
-                                dolores takimata dolor dolore dolore sit. Sit ipsum erat amet lorem et, magna
-                                sea at sed et eos. Accusam eirmod kasd lorem clita sanctus ut consetetur et. Et
-                                duo tempor sea kasd clita ipsum et. Takimata kasd diam justo est eos erat
-                                aliquyam et ut.</p>
+                            <p>The best time to visit Kakum National Park is during the dry season, from November to March, when the trails are more accessible and wildlife viewing is at its peak. However, the park is beautiful year-round, and the rainy season brings its own charm with lush greenery and spectacular waterfalls. Eastern Hills EcoPark and Tour offers guided packages that include transportation from Accra or Cape Coast, park entrance fees, and experienced guides who bring the forest to life with their knowledge of local ecology and Akan cultural traditions connected to the forest. We also arrange visits to nearby Cape Coast Castle, making for a perfect combination of nature and history in a single trip.</p>
                         </div>
                     </div>
                     <!-- Blog Detail End -->
@@ -285,32 +213,23 @@
                         <div class="media mb-4">
                             <img src="/static/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                             <div class="media-body">
-                                <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                                <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                                    accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.
-                                    Gubergren clita aliquyam consetetur sadipscing, at tempor amet ipsum diam tempor
-                                    consetetur at sit.</p>
+                                <h6><a href="">Eastern Hills Team</a> <small><i>12 Mar 2025</i></small></h6>
+                                <p>We visited Kakum last month with Eastern Hills and it was absolutely magical. The early morning canopy walk was worth waking up for — we spotted a hornbill and several monkeys!</p>
                                 <button class="btn btn-sm btn-outline-primary">Reply</button>
                             </div>
                         </div>
                         <div class="media">
                             <img src="/static/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                             <div class="media-body">
-                                <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                                <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                                    accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.
-                                    Gubergren clita aliquyam consetetur sadipscing, at tempor amet ipsum diam tempor
-                                    consetetur at sit.</p>
+                                <h6><a href="">Eastern Hills Team</a> <small><i>12 Mar 2025</i></small></h6>
+                                <p>We visited Kakum last month with Eastern Hills and it was absolutely magical. The early morning canopy walk was worth waking up for — we spotted a hornbill and several monkeys!</p>
                                 <button class="btn btn-sm btn-outline-primary">Reply</button>
                                 <div class="media mt-4">
                                     <img src="/static/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1"
                                         style="width: 45px;">
                                     <div class="media-body">
-                                        <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                                        <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor
-                                            labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed
-                                            eirmod ipsum. Gubergren clita aliquyam consetetur sadipscing, at tempor amet
-                                            ipsum diam tempor consetetur at sit.</p>
+                                        <h6><a href="">Eastern Hills Team</a> <small><i>12 Mar 2025</i></small></h6>
+                                        <p>Great article! We're planning a family trip to Kakum next month. Would you recommend the guided night walk as well? Our kids are quite adventurous.</p>
                                         <button class="btn btn-sm btn-outline-primary">Reply</button>
                                     </div>
                                 </div>
@@ -353,8 +272,8 @@
                     <!-- Author Bio -->
                     <div class="d-flex flex-column text-center bg-white mb-5 py-5 px-4">
                         <img src="/static/img/user.jpg" class="img-fluid mx-auto mb-3" style="width: 100px;">
-                        <h3 class="text-primary mb-3">John Doe</h3>
-                        <p>Conset elitr erat vero dolor ipsum et diam, eos dolor lorem, ipsum sit no ut est  ipsum erat kasd amet elitr</p>
+                        <h3 class="text-primary mb-3">Eastern Hills Team</h3>
+                        <p>Travel writer and Ghana tourism enthusiast sharing insights on the best destinations, cultural experiences, and hidden gems across West Africa.</p>
                         <div class="d-flex justify-content-center">
                             <a class="text-primary px-2" href="">
                                 <i class="fab fa-facebook-f"></i>
@@ -393,29 +312,27 @@
                         <div class="bg-white" style="padding: 30px;">
                             <ul class="list-inline m-0">
                                 <li class="mb-3 d-flex justify-content-between align-items-center">
-                                    <a class="text-dark" href="#"><i class="fa fa-angle-right text-primary mr-2"></i>Web
-                                        Design</a>
-                                    <span class="badge badge-primary badge-pill">150</span>
+                                    <a class="text-dark" href="#"><i class="fa fa-angle-right text-primary mr-2"></i>Destinations</a>
+                                    <span class="badge badge-primary badge-pill">24</span>
                                 </li>
                                 <li class="mb-3 d-flex justify-content-between align-items-center">
-                                    <a class="text-dark" href="#"><i class="fa fa-angle-right text-primary mr-2"></i>Web
-                                        Development</a>
-                                    <span class="badge badge-primary badge-pill">131</span>
-                                </li>
-                                <li class="mb-3 d-flex justify-content-between align-items-center">
-                                    <a class="text-dark" href="#"><i
-                                            class="fa fa-angle-right text-primary mr-2"></i>Online Marketing</a>
-                                    <span class="badge badge-primary badge-pill">78</span>
+                                    <a class="text-dark" href="#"><i class="fa fa-angle-right text-primary mr-2"></i>Culture &amp; Heritage</a>
+                                    <span class="badge badge-primary badge-pill">18</span>
                                 </li>
                                 <li class="mb-3 d-flex justify-content-between align-items-center">
                                     <a class="text-dark" href="#"><i
-                                            class="fa fa-angle-right text-primary mr-2"></i>Keyword Research</a>
-                                    <span class="badge badge-primary badge-pill">56</span>
+                                            class="fa fa-angle-right text-primary mr-2"></i>Wildlife &amp; Nature</a>
+                                    <span class="badge badge-primary badge-pill">15</span>
+                                </li>
+                                <li class="mb-3 d-flex justify-content-between align-items-center">
+                                    <a class="text-dark" href="#"><i
+                                            class="fa fa-angle-right text-primary mr-2"></i>Travel Tips</a>
+                                    <span class="badge badge-primary badge-pill">12</span>
                                 </li>
                                 <li class="d-flex justify-content-between align-items-center">
                                     <a class="text-dark" href="#"><i
-                                            class="fa fa-angle-right text-primary mr-2"></i>Email Marketing</a>
-                                    <span class="badge badge-primary badge-pill">98</span>
+                                            class="fa fa-angle-right text-primary mr-2"></i>Food &amp; Cuisine</a>
+                                    <span class="badge badge-primary badge-pill">9</span>
                                 </li>
                             </ul>
                         </div>
@@ -427,22 +344,22 @@
                         <a class="d-flex align-items-center text-decoration-none bg-white mb-3" href="">
                             <img class="img-fluid" src="/static/img/blog-100x100.jpg" alt="">
                             <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
+                                <h6 class="m-1">Best Time to Visit Ghana's National Parks</h6>
+                                <small>Mar 15, 2025</small>
                             </div>
                         </a>
                         <a class="d-flex align-items-center text-decoration-none bg-white mb-3" href="">
                             <img class="img-fluid" src="/static/img/blog-100x100.jpg" alt="">
                             <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
+                                <h6 class="m-1">Best Time to Visit Ghana's National Parks</h6>
+                                <small>Mar 15, 2025</small>
                             </div>
                         </a>
                         <a class="d-flex align-items-center text-decoration-none bg-white mb-3" href="">
                             <img class="img-fluid" src="/static/img/blog-100x100.jpg" alt="">
                             <div class="pl-3">
-                                <h6 class="m-1">Diam lorem dolore justo eirmod lorem dolore</h6>
-                                <small>Jan 01, 2050</small>
+                                <h6 class="m-1">Best Time to Visit Ghana's National Parks</h6>
+                                <small>Mar 15, 2025</small>
                             </div>
                         </a>
                     </div>
@@ -451,12 +368,12 @@
                     <div class="mb-5">
                         <h4 class="text-uppercase mb-4" style="letter-spacing: 5px;">Tag Cloud</h4>
                         <div class="d-flex flex-wrap m-n1">
-                            <a href="" class="btn btn-light m-1">Design</a>
-                            <a href="" class="btn btn-light m-1">Development</a>
-                            <a href="" class="btn btn-light m-1">Marketing</a>
-                            <a href="" class="btn btn-light m-1">SEO</a>
-                            <a href="" class="btn btn-light m-1">Writing</a>
-                            <a href="" class="btn btn-light m-1">Consulting</a>
+                            <a href="" class="btn btn-light m-1">Ghana</a>
+                            <a href="" class="btn btn-light m-1">Waterfalls</a>
+                            <a href="" class="btn btn-light m-1">Safari</a>
+                            <a href="" class="btn btn-light m-1">Heritage</a>
+                            <a href="" class="btn btn-light m-1">Eco Tourism</a>
+                            <a href="" class="btn btn-light m-1">Adventure</a>
                         </div>
                     </div>
                 </div>
@@ -473,7 +390,7 @@
                 <a href="" class="navbar-brand">
                     <h1 class="text-primary"><span class="text-white">EASTERN</span>HILLS</h1>
                 </a>
-                <p>Sed ipsum clita tempor ipsum ipsum amet sit ipsum lorem amet labore rebum lorem ipsum dolor. No sed vero lorem dolor dolor</p>
+                <p>Eastern Hills EcoPark and Tour is your gateway to Ghana's most breathtaking destinations. We craft unforgettable travel experiences rooted in culture, nature, and adventure.</p>
                 <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Follow Us</h6>
                 <div class="d-flex justify-content-start">
                     <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
@@ -508,7 +425,7 @@
             </div>
             <div class="col-lg-3 col-md-6 mb-5">
                 <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact Us</h5>
-                <p><i class="fa fa-map-marker-alt mr-2"></i>Location, City, Country</p>
+                <p><i class="fa fa-map-marker-alt mr-2"></i>Eastern Region, Ghana</p>
                 <p><i class="fa fa-phone-alt mr-2"></i>+233(0) 55 502 9441</p>
                 <p><i class="fa fa-envelope mr-2"></i><a href="mailto:recipient@example.com">ehillsecopark@gmail.com</a></p>
                 <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Newsletter</h6>

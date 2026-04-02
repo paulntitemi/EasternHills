@@ -9,7 +9,7 @@
     <meta content="Free HTML Templates" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <link href="/static/img/logo.jpg" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -119,96 +119,53 @@
     <div class="container-fluid booking mt-5 pb-5">
         <div class="container pb-5">
             <div class="bg-light shadow" style="padding: 30px;">
-                <div class="row align-items-center" style="min-height: 60px;">
-                    <div class="col-md-10">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <select class="custom-select px-4" style="height: 47px;">
-                                        <option selected>Destination</option>
-                                        <option value="1">Aburi Botanical Gardens</option>
-                                        <option value="2">Accra Zoo</option>
-                                        <option value="3">Ada Foah Beach</option>
-                                        <option value="4">Ankasa Forest</option>
-                                        <option value="5">Bobiri Forest and Butterfly Sanctuary</option>
-                                        <option value="6">Boabeng Fiema Monkey Sanctuary</option>
-                                        <option value="7">Bunsu Arboretum</option>
-                                        <option value="8">Buoyam Caves</option>
-                                        <option value="9">Cape Coast Castle</option>
-                                        <option value="10">Cape Three Point</option>
-                                        <option value="11">Dubois Memorial Centre</option>
-                                        <option value="12">Elmina Castle</option>
-                                        <option value="13">Gemi Amedzofe(Mountain)</option>
-                                        <option value="14">Ghana Museum</option>
-                                        <option value="15">Kakum National Park</option>
-                                        <option value="16">Kintampo Waterfalls</option>
-                                        <option value="17">Kumasi Armed Forces Military Museum</option>
-                                        <option value="18">Kumasi Zoo</option>
-                                        <option value="19">Kyabobo National Park</option>
-                                        <option value="20">Manhyia Palace</option>
-                                        <option value="21">Mole National Park</option>
-                                        <option value="22">Mognori Eco Village</option>
-                                        <option value="23">Mountain Afadjato(Tagbo Waterfall)</option>
-                                        <option value="24">Nkrumah Memorial Park</option>
-                                        <option value="25">Nzulezu Stilt Village</option>
-                                        <option value="26">Obuasi Mine</option>
-                                        <option value="27">Okomfo Anokye Sword</option>
-                                        <option value="28">Paga Chief Pond</option>
-                                        <option value="29">Paga Zenga Crocodile Pond</option>
-                                        <option value="30">Pikworo Nania Slave Camp</option>
-                                        <option value="31">Prempeh Jubilee</option>
-                                        <option value="32">Shai Hills</option>
-                                        <option value="33">Sirigu Women Organisation for Pottery Art</option>
-                                        <option value="34">Tagbo Waterfall/Mountain Afadjato</option>
-                                        <option value="35">Tafi Atome Monkey Sanctuary</option>
-                                        <option value="36">Tango Hills/Tingzag Shrine</option>
-                                        <option value="37">Tano Boase Sacred Grove</option>
-                                        <option value="38">Wassa Domama Roch Shrine</option>
-                                        <option value="39">Wechiau Hippo Sanctuary</option>
-                                        <option value="40">Wli Waterfalls</option>
-                                        <option value="41">Xavi Bird Sanctuary</option>
-                                        <option value="42">Destination 1</option>
-                                        <option value="43">Destination 1</option>
-                                        <option value="44">Destination 1</option>
-                                        <option value="45">Destination 1</option>
-                                        <option value="46">Destination 1</option>
-                                        <option value="47">Destination 1</option>
-                                        <option value="48">Destination 1</option>
-                                        <option value="49">Destination 1</option>
-                                        <option value="50">Destination 1</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <div class="date" id="date1" data-target-input="nearest">
-                                        <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <div class="date" id="date2" data-target-input="nearest">
-                                        <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Return Date" data-target="#date2" data-toggle="datetimepicker"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3 mb-md-0">
-                                    <select class="custom-select px-4" style="height: 47px;">
-                                        <option selected>Duration</option>
-                                        <option value="1">Duration 1</option>
-                                        <option value="2">Duration 1</option>
-                                        <option value="3">Duration 1</option>
-                                    </select>
-                                </div>
+                {% with messages = get_flashed_messages(category_filter=['booking_success']) %}
+                {% if messages %}
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=['booking_error']) %}
+                {% if messages %}
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    {{ messages[0] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+                {% endwith %}
+                <form method="POST" action="/book">
+                    {{ booking_form.hidden_tag() }}
+                    <div class="row align-items-center" style="min-height: 60px;">
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.destination(class='custom-select px-4', style='height: 47px;') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="date" id="date1" data-target-input="nearest">
+                                <input type="text" name="depart_date" class="form-control p-4 datetimepicker-input" placeholder="Depart Date" data-target="#date1" data-toggle="datetimepicker"/>
                             </div>
                         </div>
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.travellers(class='form-control px-4', style='height: 47px;', placeholder='Number of Travellers', min='1', max='50') }}
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary btn-block" type="submit" style="height: 47px; margin-top: -2px;">Submit</button>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.full_name(class='form-control px-4', style='height: 47px;', placeholder='Full Name') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ booking_form.phone(class='form-control px-4', style='height: 47px;', placeholder='Phone / WhatsApp') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Book Now</button>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -228,7 +185,7 @@
                     <div class="about-text bg-white p-4 p-lg-5 my-lg-5">
                         <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">About Us</h6>
                         <h1 class="mb-3">We Provide Best Tour Packages In Your Budget</h1>
-                        <p>Dolores lorem lorem ipsum sit et ipsum. Sadip sea amet diam dolore sed et. Sit rebum labore sit sit ut vero no sit. Et elitr stet dolor sed sit et sed ipsum et kasd ut. Erat duo eos et erat sed diam duo</p>
+                        <p>At Eastern Hills EcoPark and Tour, we believe every journey through Ghana should be transformative. Founded with a passion for showcasing Ghana's natural beauty, rich culture, and vibrant history, we have helped thousands of travellers create memories that last a lifetime. From the lush rainforests of Kakum to the historic castles of the coast, we bring you the very best of Ghana at prices that make adventure accessible to all.</p>
                         <div class="row mb-4">
                             <div class="col-6">
                                 <img class="img-fluid" src="/static/img/about-1.jpg" alt="">
@@ -359,8 +316,8 @@
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <h5 class="text-truncate">Guide Name</h5>
-                            <p class="m-0">Designation</p>
+                            <h5 class="text-truncate">Kwame Mensah</h5>
+                            <p class="m-0">Senior Tour Guide</p>
                         </div>
                     </div>
                 </div>
@@ -376,8 +333,8 @@
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <h5 class="text-truncate">Guide Name</h5>
-                            <p class="m-0">Designation</p>
+                            <h5 class="text-truncate">Abena Osei</h5>
+                            <p class="m-0">Cultural Specialist</p>
                         </div>
                     </div>
                 </div>
@@ -393,8 +350,8 @@
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <h5 class="text-truncate">Guide Name</h5>
-                            <p class="m-0">Designation</p>
+                            <h5 class="text-truncate">Kofi Asante</h5>
+                            <p class="m-0">Adventure Guide</p>
                         </div>
                     </div>
                 </div>
@@ -410,8 +367,8 @@
                             </div>
                         </div>
                         <div class="text-center py-4">
-                            <h5 class="text-truncate">Guide Name</h5>
-                            <p class="m-0">Designation</p>
+                            <h5 class="text-truncate">Esi Amponsah</h5>
+                            <p class="m-0">Wildlife Expert</p>
                         </div>
                     </div>
                 </div>
@@ -428,7 +385,7 @@
                 <a href="" class="navbar-brand">
                     <h1 class="text-primary"><span class="text-white">EASTERN</span>HILLS</h1>
                 </a>
-                <p>Sed ipsum clita tempor ipsum ipsum amet sit ipsum lorem amet labore rebum lorem ipsum dolor. No sed vero lorem dolor dolor</p>
+                <p>Eastern Hills EcoPark and Tour is your gateway to Ghana's most breathtaking destinations. We craft unforgettable travel experiences rooted in culture, nature, and adventure.</p>
                 <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Follow Us</h6>
                 <div class="d-flex justify-content-start">
                     <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
@@ -463,7 +420,7 @@
             </div>
             <div class="col-lg-3 col-md-6 mb-5">
                 <h5 class="text-white text-uppercase mb-4" style="letter-spacing: 5px;">Contact Us</h5>
-                <p><i class="fa fa-map-marker-alt mr-2"></i>Location, City, Country</p>
+                <p><i class="fa fa-map-marker-alt mr-2"></i>Eastern Region, Ghana</p>
                 <p><i class="fa fa-phone-alt mr-2"></i>+233(0) 55 502 9441</p>
                 <p><i class="fa fa-envelope mr-2"></i><a href="mailto:recipient@example.com">ehillsecopark@gmail.com</a></p>
                 <h6 class="text-white text-uppercase mt-4 mb-3" style="letter-spacing: 5px;">Newsletter</h6>
