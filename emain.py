@@ -2,8 +2,7 @@ import os
 import sqlite3
 from datetime import datetime
 from flask import Flask, request, render_template, redirect, url_for, flash, g
-from forms import ContactForm, BookingForm
-
+from forms import ContactForm, BusBookingForm, ApartmentBookingForm, TourBookingForm
 
 
 app = Flask(__name__, template_folder='templates')
@@ -29,7 +28,31 @@ def close_db(exception):
 def init_db():
     db = sqlite3.connect(DATABASE)
     db.execute('''
-        CREATE TABLE IF NOT EXISTS bookings (
+        CREATE TABLE IF NOT EXISTS bus_bookings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            route TEXT NOT NULL,
+            travel_date TEXT NOT NULL,
+            passengers INTEGER NOT NULL,
+            full_name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    ''')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS apartment_bookings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            location TEXT NOT NULL,
+            apartment_type TEXT NOT NULL,
+            checkin_date TEXT NOT NULL,
+            checkout_date TEXT NOT NULL,
+            guests INTEGER NOT NULL,
+            full_name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        )
+    ''')
+    db.execute('''
+        CREATE TABLE IF NOT EXISTS tour_bookings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             destination TEXT NOT NULL,
             depart_date TEXT NOT NULL,
@@ -59,90 +82,99 @@ def ensure_db():
         init_db()
 
 
-@app.route("/book", methods=["POST"])
-def book():
-    form = BookingForm()
-    if form.validate_on_submit():
-        db = get_db()
-        db.execute(
-            'INSERT INTO bookings (destination, depart_date, travellers, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-            (form.destination.data, form.depart_date.data, form.travellers.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
-        )
-        db.commit()
-        flash('Your booking inquiry has been submitted successfully! We will contact you shortly.', 'booking_success')
-    else:
-        flash('Please fill in all fields correctly.', 'booking_error')
-    return redirect(request.referrer or url_for('home'))
+# --- Pages ---
+
+@app.route("/")
+def home():
+    return render_template('index.html')
 
 
-@app.route("/about")
-def about():
-    return render_template('about.html', booking_form=BookingForm())
+@app.route("/index")
+def index():
+    return render_template('index.html')
 
 
-@app.route("/blog")
-def blog():
-    return render_template('blog.html', booking_form=BookingForm())
+@app.route("/buses")
+def buses():
+    return render_template('buses.html', bus_form=BusBookingForm())
+
+
+@app.route("/apartments")
+def apartments():
+    return render_template('apartments.html', apt_form=ApartmentBookingForm())
+
+
+@app.route("/tours")
+def tours():
+    return render_template('tours.html', tour_form=TourBookingForm())
 
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     form = ContactForm()
-    booking_form = BookingForm()
     form_success = False
 
-    if request.method == "POST":
-        if 'submit' in request.form and form.validate_on_submit():
-            db = get_db()
-            db.execute(
-                'INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, ?)',
-                (form.name.data, form.email.data, form.subject.data, form.message.data, datetime.now().isoformat())
-            )
-            db.commit()
-            form_success = True
-            form.name.data, form.email.data, form.subject.data, form.message.data = "", "", "", ""
+    if request.method == "POST" and form.validate_on_submit():
+        db = get_db()
+        db.execute(
+            'INSERT INTO contact_messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, ?)',
+            (form.name.data, form.email.data, form.subject.data, form.message.data, datetime.now().isoformat())
+        )
+        db.commit()
+        form_success = True
+        form.name.data, form.email.data, form.subject.data, form.message.data = "", "", "", ""
 
-    return render_template('contact.html', form=form, booking_form=booking_form, form_success=form_success)
-
-
-@app.route("/destination")
-def destination():
-    return render_template('destination.html', booking_form=BookingForm())
+    return render_template('contact.html', form=form, form_success=form_success)
 
 
-@app.route("/guide")
-def guide():
-    return render_template('guide.html', booking_form=BookingForm())
+# --- Booking Handlers ---
+
+@app.route("/book-bus", methods=["POST"])
+def book_bus():
+    form = BusBookingForm()
+    if form.validate_on_submit():
+        db = get_db()
+        db.execute(
+            'INSERT INTO bus_bookings (route, travel_date, passengers, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+            (form.route.data, form.travel_date.data, form.passengers.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+        )
+        db.commit()
+        flash('Your bus booking has been submitted successfully! We will contact you shortly.', 'success')
+    else:
+        flash('Please fill in all fields correctly.', 'error')
+    return redirect(url_for('buses'))
 
 
-@app.route("/index")
-def index():
-    return render_template('index.html', booking_form=BookingForm())
+@app.route("/book-apartment", methods=["POST"])
+def book_apartment():
+    form = ApartmentBookingForm()
+    if form.validate_on_submit():
+        db = get_db()
+        db.execute(
+            'INSERT INTO apartment_bookings (location, apartment_type, checkin_date, checkout_date, guests, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            (form.location.data, form.apartment_type.data, form.checkin_date.data, form.checkout_date.data, form.guests.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+        )
+        db.commit()
+        flash('Your apartment booking has been submitted successfully! We will contact you shortly.', 'success')
+    else:
+        flash('Please fill in all fields correctly.', 'error')
+    return redirect(url_for('apartments'))
 
 
-@app.route("/")
-def home():
-    return render_template('index.html', booking_form=BookingForm())
-
-
-@app.route("/package")
-def package():
-    return render_template('package.html', booking_form=BookingForm())
-
-
-@app.route("/service")
-def service():
-    return render_template('service.html', booking_form=BookingForm())
-
-
-@app.route("/single")
-def single():
-    return render_template('single.html', booking_form=BookingForm())
-
-
-@app.route("/testimonial")
-def testimonial():
-    return render_template('testimonial.html', booking_form=BookingForm())
+@app.route("/book-tour", methods=["POST"])
+def book_tour():
+    form = TourBookingForm()
+    if form.validate_on_submit():
+        db = get_db()
+        db.execute(
+            'INSERT INTO tour_bookings (destination, depart_date, travellers, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+            (form.destination.data, form.depart_date.data, form.travellers.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+        )
+        db.commit()
+        flash('Your tour booking has been submitted successfully! We will contact you shortly.', 'success')
+    else:
+        flash('Please fill in all fields correctly.', 'error')
+    return redirect(url_for('tours'))
 
 
 if __name__ == '__main__':

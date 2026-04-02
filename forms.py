@@ -4,7 +4,50 @@ from wtforms.validators import DataRequired, Length, Email, NumberRange
 import email_validator
 
 
-DESTINATIONS = [
+BUS_ROUTES = [
+    ('', 'Select Route'),
+    ('Accra to Kumasi', 'Accra to Kumasi'),
+    ('Kumasi to Accra', 'Kumasi to Accra'),
+    ('Accra to Cape Coast', 'Accra to Cape Coast'),
+    ('Cape Coast to Accra', 'Cape Coast to Accra'),
+    ('Accra to Tamale', 'Accra to Tamale'),
+    ('Tamale to Accra', 'Tamale to Accra'),
+    ('Accra to Ho', 'Accra to Ho'),
+    ('Ho to Accra', 'Ho to Accra'),
+    ('Accra to Takoradi', 'Accra to Takoradi'),
+    ('Takoradi to Accra', 'Takoradi to Accra'),
+    ('Kumasi to Tamale', 'Kumasi to Tamale'),
+    ('Tamale to Kumasi', 'Tamale to Kumasi'),
+    ('Accra to Koforidua', 'Accra to Koforidua'),
+    ('Koforidua to Accra', 'Koforidua to Accra'),
+    ('Accra to Sunyani', 'Accra to Sunyani'),
+    ('Sunyani to Accra', 'Sunyani to Accra'),
+]
+
+APARTMENT_LOCATIONS = [
+    ('', 'Select Location'),
+    ('Accra - East Legon', 'Accra - East Legon'),
+    ('Accra - Airport Area', 'Accra - Airport Area'),
+    ('Accra - Osu', 'Accra - Osu'),
+    ('Accra - Cantonments', 'Accra - Cantonments'),
+    ('Accra - Labone', 'Accra - Labone'),
+    ('Kumasi', 'Kumasi'),
+    ('Cape Coast', 'Cape Coast'),
+    ('Takoradi', 'Takoradi'),
+    ('Tamale', 'Tamale'),
+    ('Ho', 'Ho'),
+    ('Koforidua', 'Koforidua'),
+]
+
+APARTMENT_TYPES = [
+    ('', 'Select Type'),
+    ('Studio', 'Studio'),
+    ('1-Bedroom', '1-Bedroom'),
+    ('2-Bedroom', '2-Bedroom'),
+    ('3-Bedroom', '3-Bedroom'),
+]
+
+TOUR_DESTINATIONS = [
     ('', 'Select Destination'),
     ('Aburi Botanical Gardens', 'Aburi Botanical Gardens'),
     ('Accra Zoo', 'Accra Zoo'),
@@ -51,7 +94,6 @@ DESTINATIONS = [
 
 
 class ContactForm(FlaskForm):
-
     name = StringField("NAME", validators=[DataRequired('A full name is required'), Length(min=5, max=30)])
     email = StringField("EMAIL", validators=[DataRequired('A correct email is required'), Email()])
     subject = StringField("SUBJECT", validators=[DataRequired('A subject is required')])
@@ -59,31 +101,30 @@ class ContactForm(FlaskForm):
     submit = SubmitField("SEND")
 
 
-class BookingForm(FlaskForm):
-    destination = SelectField(
-        'Destination',
-        choices=DESTINATIONS,
-        validators=[DataRequired('Please select a destination')]
-    )
+class BusBookingForm(FlaskForm):
+    route = SelectField('Route', choices=BUS_ROUTES, validators=[DataRequired('Please select a route')])
+    travel_date = StringField('Travel Date', validators=[DataRequired('Please select a travel date')])
+    passengers = IntegerField('Passengers', validators=[DataRequired('Please enter number of passengers'), NumberRange(min=1, max=50)])
+    full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
+    submit = SubmitField('Book Bus')
 
-    depart_date = StringField(
-        'Depart Date',
-        validators=[DataRequired('Please select a departure date')]
-    )
 
-    travellers = IntegerField(
-        'Number of Travellers',
-        validators=[DataRequired('Please enter number of travellers'), NumberRange(min=1, max=50, message='Must be between 1 and 50')]
-    )
+class ApartmentBookingForm(FlaskForm):
+    location = SelectField('Location', choices=APARTMENT_LOCATIONS, validators=[DataRequired('Please select a location')])
+    apartment_type = SelectField('Type', choices=APARTMENT_TYPES, validators=[DataRequired('Please select apartment type')])
+    checkin_date = StringField('Check-in', validators=[DataRequired('Please select check-in date')])
+    checkout_date = StringField('Check-out', validators=[DataRequired('Please select check-out date')])
+    guests = IntegerField('Guests', validators=[DataRequired('Please enter number of guests'), NumberRange(min=1, max=10)])
+    full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
+    submit = SubmitField('Book Apartment')
 
-    full_name = StringField(
-        'Full Name',
-        validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)]
-    )
 
-    phone = StringField(
-        'Phone / WhatsApp',
-        validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)]
-    )
-
-    submit = SubmitField('Book Now')
+class TourBookingForm(FlaskForm):
+    destination = SelectField('Destination', choices=TOUR_DESTINATIONS, validators=[DataRequired('Please select a destination')])
+    depart_date = StringField('Depart Date', validators=[DataRequired('Please select a departure date')])
+    travellers = IntegerField('Travellers', validators=[DataRequired('Please enter number of travellers'), NumberRange(min=1, max=50)])
+    full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
+    submit = SubmitField('Book Tour')
