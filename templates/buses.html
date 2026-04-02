@@ -7,7 +7,7 @@
     <div class="container-fluid page-header">
         <div class="container">
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
-                <h3 class="display-4 text-white text-uppercase">Bus Services</h3>
+                <h3 class="display-4 text-white text-uppercase">Bus Rental</h3>
                 <div class="d-inline-flex text-white">
                     <p class="m-0 text-uppercase"><a class="text-white" href="/">Home</a></p>
                     <i class="fa fa-angle-double-right pt-1 px-3"></i>
@@ -23,7 +23,8 @@
     <div class="container-fluid booking mt-5 pb-5">
         <div class="container pb-5">
             <div class="bg-light shadow" style="padding: 30px;">
-                <h6 class="text-primary text-uppercase text-center mb-3" style="letter-spacing: 5px;">Book Your Seat</h6>
+                <h6 class="text-primary text-uppercase text-center mb-3" style="letter-spacing: 5px;">Rent a Bus With Driver</h6>
+                <p class="text-center text-muted mb-4">Tell us your route, preferred bus size, and travel date. We'll get back to you with a quote.</p>
                 {% with messages = get_flashed_messages(category_filter=['success']) %}
                 {% if messages %}
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
@@ -47,12 +48,12 @@
                             {{ bus_form.route(class='custom-select px-4', style='height: 47px;') }}
                         </div>
                         <div class="col-md-4 mb-3">
+                            {{ bus_form.bus_type(class='custom-select px-4', style='height: 47px;') }}
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <div class="date" id="date1" data-target-input="nearest">
                                 <input type="text" name="travel_date" class="form-control p-4 datetimepicker-input" placeholder="Travel Date" data-target="#date1" data-toggle="datetimepicker"/>
                             </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            {{ bus_form.passengers(class='form-control px-4', style='height: 47px;', placeholder='Number of Passengers', min='1', max='50') }}
                         </div>
                     </div>
                     <div class="row align-items-center">
@@ -63,7 +64,7 @@
                             {{ bus_form.phone(class='form-control px-4', style='height: 47px;', placeholder='Phone / WhatsApp') }}
                         </div>
                         <div class="col-md-4 mb-3">
-                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Book Bus</button>
+                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Get a Quote</button>
                         </div>
                     </div>
                 </form>
@@ -73,60 +74,93 @@
     <!-- Bus Booking End -->
 
 
+    <!-- Fleet Start -->
+    <div class="container-fluid py-5">
+        <div class="container pt-5 pb-3">
+            <div class="text-center mb-3 pb-3">
+                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Our Fleet</h6>
+                <h1>Choose Your Bus</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="service-item bg-white text-center mb-2 py-5 px-4">
+                        <i class="fa fa-2x fa-shuttle-van mx-auto mb-4"></i>
+                        <h5 class="mb-2">Sprinter (15-seater)</h5>
+                        <p class="m-0">Ideal for small groups, family trips, and corporate outings. Compact, air-conditioned, and easy to navigate through city and rural roads.</p>
+                        <p class="text-primary mt-3 mb-0"><small>Includes professional driver &amp; fuel</small></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="service-item bg-white text-center mb-2 py-5 px-4">
+                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
+                        <h5 class="mb-2">Coaster (30-seater)</h5>
+                        <p class="m-0">Perfect for medium-sized groups, church trips, school excursions, and events. Spacious seating with overhead luggage storage.</p>
+                        <p class="text-primary mt-3 mb-0"><small>Includes professional driver &amp; fuel</small></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="service-item bg-white text-center mb-2 py-5 px-4">
+                        <i class="fa fa-2x fa-bus-alt mx-auto mb-4"></i>
+                        <h5 class="mb-2">Full Coach (50-seater)</h5>
+                        <p class="m-0">Our flagship coaches for large groups, conferences, weddings, and long-distance travel. Maximum comfort with reclining seats and ample space.</p>
+                        <p class="text-primary mt-3 mb-0"><small>Includes professional driver &amp; fuel</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fleet End -->
+
+
     <!-- Routes Start -->
     <div class="container-fluid py-5">
         <div class="container pt-5 pb-3">
             <div class="text-center mb-3 pb-3">
                 <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Our Routes</h6>
-                <h1>Popular Bus Routes</h1>
+                <h1>Popular Routes We Cover</h1>
+                <p class="text-muted">Prices vary by bus size and route. Request a quote for your specific trip.</p>
             </div>
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Accra to Kumasi</h5>
-                        <p class="m-0">Daily departures from Accra to Kumasi. Comfortable air-conditioned coaches with a journey time of approximately 5 hours.</p>
-                        <h5 class="text-primary mt-3">From GHS 80</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Accra &harr; Kumasi</h5>
+                        <p class="m-0">Approx. 5 hours. One of our most popular routes connecting the two largest cities in Ghana.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Accra to Cape Coast</h5>
-                        <p class="m-0">Regular services to Cape Coast and Elmina. Perfect for weekend getaways to the coast, with a 3-hour ride.</p>
-                        <h5 class="text-primary mt-3">From GHS 50</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Accra &harr; Cape Coast</h5>
+                        <p class="m-0">Approx. 3 hours. Perfect for group trips to the castles, Kakum National Park, and the coast.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Accra to Tamale</h5>
-                        <p class="m-0">Overnight and daytime services connecting Accra to the Northern capital. Air-conditioned buses with rest stops.</p>
-                        <h5 class="text-primary mt-3">From GHS 150</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Accra &harr; Tamale</h5>
+                        <p class="m-0">Approx. 10 hours. Long-distance service to Northern Ghana with rest stops along the way.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Accra to Takoradi</h5>
-                        <p class="m-0">Direct service to Ghana's oil city. Enjoy scenic coastal views on this comfortable 4-hour journey.</p>
-                        <h5 class="text-primary mt-3">From GHS 70</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Accra &harr; Takoradi</h5>
+                        <p class="m-0">Approx. 4 hours. Scenic coastal route to Ghana's Western Region capital and oil city.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Accra to Ho</h5>
-                        <p class="m-0">Travel to the Volta Region capital with connections to Wli Waterfalls and Mountain Afadjato.</p>
-                        <h5 class="text-primary mt-3">From GHS 60</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Accra &harr; Ho</h5>
+                        <p class="m-0">Approx. 3 hours. Gateway to the Volta Region's waterfalls, mountains, and Kente villages.</p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Kumasi to Tamale</h5>
-                        <p class="m-0">Connect from the Ashanti capital to the Northern Region. A 6-hour journey through the heart of Ghana.</p>
-                        <h5 class="text-primary mt-3">From GHS 100</h5>
+                        <i class="fa fa-2x fa-route mx-auto mb-4"></i>
+                        <h5 class="mb-2">Custom Route</h5>
+                        <p class="m-0">Don't see your route? No problem. We cover any destination in Ghana. Contact us for a custom quote.</p>
                     </div>
                 </div>
             </div>
@@ -153,22 +187,22 @@
                 <div class="col-md-4">
                     <div class="d-flex mb-4 mb-lg-0">
                         <div class="d-flex flex-shrink-0 align-items-center justify-content-center bg-primary mr-3" style="height: 100px; width: 100px;">
-                            <i class="fa fa-2x fa-shield-alt text-white"></i>
+                            <i class="fa fa-2x fa-user-tie text-white"></i>
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="">Safety First</h5>
-                            <p class="m-0">Our experienced drivers and well-maintained vehicles ensure your safety is never compromised on any route.</p>
+                            <h5 class="">Professional Drivers</h5>
+                            <p class="m-0">Every rental comes with an experienced, licensed driver who knows the roads and ensures a safe trip.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex mb-4 mb-lg-0">
                         <div class="d-flex flex-shrink-0 align-items-center justify-content-center bg-primary mr-3" style="height: 100px; width: 100px;">
-                            <i class="fa fa-2x fa-clock text-white"></i>
+                            <i class="fa fa-2x fa-hand-holding-usd text-white"></i>
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="">On-Time Departures</h5>
-                            <p class="m-0">We pride ourselves on punctuality. Our buses depart on schedule so you can plan your day with confidence.</p>
+                            <h5 class="">Transparent Pricing</h5>
+                            <p class="m-0">One flat rate per bus, per trip. No hidden charges, no per-head fees. Fuel and driver included in every quote.</p>
                         </div>
                     </div>
                 </div>

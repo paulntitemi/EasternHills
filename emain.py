@@ -31,8 +31,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS bus_bookings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             route TEXT NOT NULL,
+            bus_type TEXT NOT NULL,
             travel_date TEXT NOT NULL,
-            passengers INTEGER NOT NULL,
             full_name TEXT NOT NULL,
             phone TEXT NOT NULL,
             created_at TEXT NOT NULL
@@ -135,11 +135,11 @@ def book_bus():
     if form.validate_on_submit():
         db = get_db()
         db.execute(
-            'INSERT INTO bus_bookings (route, travel_date, passengers, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-            (form.route.data, form.travel_date.data, form.passengers.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+            'INSERT INTO bus_bookings (route, bus_type, travel_date, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+            (form.route.data, form.bus_type.data, form.travel_date.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
         )
         db.commit()
-        flash('Your bus booking has been submitted successfully! We will contact you shortly.', 'success')
+        flash('Your quote request has been submitted! We will contact you with pricing shortly.', 'success')
     else:
         flash('Please fill in all fields correctly.', 'error')
     return redirect(url_for('buses'))

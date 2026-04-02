@@ -24,6 +24,13 @@ BUS_ROUTES = [
     ('Sunyani to Accra', 'Sunyani to Accra'),
 ]
 
+BUS_TYPES = [
+    ('', 'Select Bus Size'),
+    ('Sprinter (15-seater)', 'Sprinter (15-seater)'),
+    ('Coaster (30-seater)', 'Coaster (30-seater)'),
+    ('Full Coach (50-seater)', 'Full Coach (50-seater)'),
+]
+
 APARTMENT_LOCATIONS = [
     ('', 'Select Location'),
     ('Accra - East Legon', 'Accra - East Legon'),
@@ -103,11 +110,11 @@ class ContactForm(FlaskForm):
 
 class BusBookingForm(FlaskForm):
     route = SelectField('Route', choices=BUS_ROUTES, validators=[DataRequired('Please select a route')])
+    bus_type = SelectField('Bus Size', choices=BUS_TYPES, validators=[DataRequired('Please select a bus size')])
     travel_date = StringField('Travel Date', validators=[DataRequired('Please select a travel date')])
-    passengers = IntegerField('Passengers', validators=[DataRequired('Please enter number of passengers'), NumberRange(min=1, max=50)])
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
-    submit = SubmitField('Book Bus')
+    submit = SubmitField('Get a Quote')
 
 
 class ApartmentBookingForm(FlaskForm):
