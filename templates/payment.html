@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Eastern Hills | Payment{% endblock %}
+
+{% block content %}
+    <!-- Header Start -->
+    <div class="container-fluid page-header">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
+                <h3 class="display-4 text-white text-uppercase">Payment</h3>
+                <div class="d-inline-flex text-white">
+                    <p class="m-0 text-uppercase"><a class="text-white" href="/">Home</a></p>
+                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                    <p class="m-0 text-uppercase">Checkout</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+
+    <!-- Payment Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Order Summary -->
+                    <div class="bg-white shadow mb-4" style="padding: 30px;">
+                        <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 3px;">Order Summary</h5>
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Booking Type</div>
+                                <div class="col-7 font-weight-bold">{{ booking_type }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Details</div>
+                                <div class="col-7 font-weight-bold">{{ details }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Date</div>
+                                <div class="col-7 font-weight-bold">{{ travel_date }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Name</div>
+                                <div class="col-7">{{ full_name }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Email</div>
+                                <div class="col-7">{{ email }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Phone</div>
+                                <div class="col-7">{{ phone }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Reservation Code</div>
+                                <div class="col-7 font-weight-bold text-primary">{{ reservation_code }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="m-0">Total Amount</h5>
+                            <div>
+                                <h3 class="m-0 text-primary font-weight-bold">GHS {{ "{:,}".format(amount) }}</h3>
+                                {% if amount_note %}<small class="text-muted">{{ amount_note }}</small>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="bg-white shadow" style="padding: 30px;">
+                        <h5 class="text-primary text-uppercase mb-4" style="letter-spacing: 3px;">Select Payment Method</h5>
+                        <form method="POST" action="/process-payment/{{ reservation_code }}">
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="d-block">
+                                        <input type="radio" name="payment_method" value="card" checked class="mr-2">
+                                        <div class="border rounded p-4 text-center" style="cursor: pointer; transition: all 0.3s;" onclick="this.parentElement.querySelector('input').checked=true; document.querySelectorAll('.payment-option').forEach(e=>e.classList.remove('border-primary')); this.classList.add('border-primary');" class="payment-option border-primary">
+                                            <i class="fa fa-2x fa-credit-card text-primary mb-2"></i>
+                                            <h6 class="m-0">Credit / Debit Card</h6>
+                                            <small class="text-muted">Visa, Mastercard</small>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="d-block">
+                                        <input type="radio" name="payment_method" value="momo" class="mr-2">
+                                        <div class="border rounded p-4 text-center" style="cursor: pointer; transition: all 0.3s;" onclick="this.parentElement.querySelector('input').checked=true; document.querySelectorAll('.payment-option').forEach(e=>e.classList.remove('border-primary')); this.classList.add('border-primary');" class="payment-option">
+                                            <i class="fa fa-2x fa-mobile-alt text-primary mb-2"></i>
+                                            <h6 class="m-0">Mobile Money</h6>
+                                            <small class="text-muted">MTN, Vodafone, AirtelTigo</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary py-3 px-5" style="font-size: 1.1rem;">
+                                    <i class="fa fa-lock mr-2"></i>Pay GHS {{ "{:,}".format(amount) }} Securely
+                                </button>
+                                <p class="text-muted mt-3 mb-0"><i class="fa fa-shield-alt mr-1"></i> Your payment is secured with 256-bit encryption</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Payment End -->
+{% endblock %}

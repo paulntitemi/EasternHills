@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Eastern Hills | Booking Confirmed{% endblock %}
+
+{% block content %}
+    <!-- Header Start -->
+    <div class="container-fluid page-header">
+        <div class="container">
+            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
+                <h3 class="display-4 text-white text-uppercase">Booking Confirmed</h3>
+                <div class="d-inline-flex text-white">
+                    <p class="m-0 text-uppercase"><a class="text-white" href="/">Home</a></p>
+                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
+                    <p class="m-0 text-uppercase">Confirmation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Header End -->
+
+
+    <!-- Confirmation Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Success Banner -->
+                    <div class="text-center mb-5">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary mb-4" style="width: 80px; height: 80px; border-radius: 50%;">
+                            <i class="fa fa-2x fa-check text-white"></i>
+                        </div>
+                        <h2>Payment Successful!</h2>
+                        <p class="text-muted">A confirmation email has been sent to <strong>{{ booking['email'] }}</strong></p>
+                    </div>
+
+                    <!-- E-Ticket -->
+                    <div class="bg-white shadow" style="padding: 30px;" id="ticket">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                            <div>
+                                <h1 class="m-0 text-primary" style="font-size: 1.5rem;"><span class="text-dark">EASTERN</span>HILLS</h1>
+                                <small class="text-muted">E-Ticket / Reservation</small>
+                            </div>
+                            <div class="text-right">
+                                <h4 class="text-primary font-weight-bold m-0">{{ booking['reservation_code'] }}</h4>
+                                <small class="text-muted">Reservation Code</small>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Booking Type</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['booking_type']|title }}</h6>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Date</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['travel_date'] }}</h6>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Details</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['details'] }}</h6>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Passenger / Guest</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['full_name'] }}</h6>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Phone</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['phone'] }}</h6>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Email</small>
+                                <h6 class="font-weight-bold mt-1">{{ booking['email'] }}</h6>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Amount Paid</small>
+                                <h5 class="font-weight-bold text-primary mt-1">GHS {{ "{:,}".format(booking['amount']) }}</h5>
+                            </div>
+                        </div>
+
+                        <div class="border-top pt-3 mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Payment Status</small>
+                                    <h6 class="mt-1"><span class="badge badge-success px-3 py-2" style="font-size: 0.9rem;">PAID</span></h6>
+                                </div>
+                                <div class="text-right">
+                                    <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Booked On</small>
+                                    <h6 class="font-weight-bold mt-1">{{ booking['created_at'][:10] }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-light mt-4 p-4">
+                        <h6 class="text-primary text-uppercase mb-3" style="letter-spacing: 3px;">Important Information</h6>
+                        <ul class="mb-0">
+                            <li class="mb-2">Please present your <strong>reservation code ({{ booking['reservation_code'] }})</strong> on the date of service.</li>
+                            <li class="mb-2">You can show this confirmation page on your phone or print it out.</li>
+                            <li class="mb-2">A copy of this e-ticket has been sent to your email.</li>
+                            <li class="mb-2">For changes or cancellations, contact us at <strong>+233(0) 55 502 9441</strong> or <strong>ehillsecopark@gmail.com</strong></li>
+                        </ul>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="text-center mt-4">
+                        <button onclick="window.print()" class="btn btn-outline-primary py-2 px-4 mr-2"><i class="fa fa-print mr-2"></i>Print Ticket</button>
+                        <a href="/" class="btn btn-primary py-2 px-4"><i class="fa fa-home mr-2"></i>Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Confirmation End -->
+{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    .nav-bar, .back-to-top, footer, .page-header, .btn { display: none !important; }
+    #ticket { box-shadow: none !important; border: 1px solid #ddd; }
+}
+</style>
+{% endblock %}

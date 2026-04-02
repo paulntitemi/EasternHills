@@ -9768,3 +9768,17 @@ h6,
   padding: 0;
   list-style-type: none;
 }
+
+/* Force Bootstrap styling on select dropdowns (override native OS widgets) */
+.custom-select,
+select.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right 0.75rem center/8px 10px no-repeat;
+  border: 1px solid #ced4da;
+  border-radius: 0;
+  color: #495057;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}

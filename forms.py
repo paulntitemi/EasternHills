@@ -100,6 +100,68 @@ TOUR_DESTINATIONS = [
 ]
 
 
+# --- Pricing (placeholder rates — adjust as needed) ---
+
+BUS_PRICES = {
+    'Sprinter (15-seater)': {
+        'short': 800,   # Accra-Cape Coast, Accra-Ho, Accra-Koforidua
+        'medium': 1200,  # Accra-Kumasi, Accra-Takoradi, Accra-Sunyani
+        'long': 2500,    # Accra-Tamale, Kumasi-Tamale
+    },
+    'Coaster (30-seater)': {
+        'short': 1500,
+        'medium': 2200,
+        'long': 4000,
+    },
+    'Full Coach (50-seater)': {
+        'short': 2500,
+        'medium': 3500,
+        'long': 6000,
+    },
+}
+
+ROUTE_DISTANCE = {
+    'Accra to Kumasi': 'medium',
+    'Kumasi to Accra': 'medium',
+    'Accra to Cape Coast': 'short',
+    'Cape Coast to Accra': 'short',
+    'Accra to Tamale': 'long',
+    'Tamale to Accra': 'long',
+    'Accra to Ho': 'short',
+    'Ho to Accra': 'short',
+    'Accra to Takoradi': 'medium',
+    'Takoradi to Accra': 'medium',
+    'Kumasi to Tamale': 'long',
+    'Tamale to Kumasi': 'long',
+    'Accra to Koforidua': 'short',
+    'Koforidua to Accra': 'short',
+    'Accra to Sunyani': 'medium',
+    'Sunyani to Accra': 'medium',
+}
+
+APARTMENT_PRICES = {
+    'Studio': 200,
+    '1-Bedroom': 280,
+    '2-Bedroom': 350,
+    '3-Bedroom': 450,
+}
+
+TOUR_PRICES = {
+    'default': 500,
+}
+
+
+def get_bus_price(route, bus_type):
+    distance = ROUTE_DISTANCE.get(route, 'medium')
+    return BUS_PRICES.get(bus_type, {}).get(distance, 1500)
+
+
+def get_apartment_price(apartment_type):
+    return APARTMENT_PRICES.get(apartment_type, 250)
+
+
+# --- Forms ---
+
 class ContactForm(FlaskForm):
     name = StringField("NAME", validators=[DataRequired('A full name is required'), Length(min=5, max=30)])
     email = StringField("EMAIL", validators=[DataRequired('A correct email is required'), Email()])
@@ -113,8 +175,9 @@ class BusBookingForm(FlaskForm):
     bus_type = SelectField('Bus Size', choices=BUS_TYPES, validators=[DataRequired('Please select a bus size')])
     travel_date = StringField('Travel Date', validators=[DataRequired('Please select a travel date')])
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    email = StringField('Email', validators=[DataRequired('Please enter your email'), Email()])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
-    submit = SubmitField('Get a Quote')
+    submit = SubmitField('Proceed to Payment')
 
 
 class ApartmentBookingForm(FlaskForm):
@@ -124,8 +187,9 @@ class ApartmentBookingForm(FlaskForm):
     checkout_date = StringField('Check-out', validators=[DataRequired('Please select check-out date')])
     guests = IntegerField('Guests', validators=[DataRequired('Please enter number of guests'), NumberRange(min=1, max=10)])
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    email = StringField('Email', validators=[DataRequired('Please enter your email'), Email()])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
-    submit = SubmitField('Book Apartment')
+    submit = SubmitField('Proceed to Payment')
 
 
 class TourBookingForm(FlaskForm):
@@ -133,5 +197,6 @@ class TourBookingForm(FlaskForm):
     depart_date = StringField('Depart Date', validators=[DataRequired('Please select a departure date')])
     travellers = IntegerField('Travellers', validators=[DataRequired('Please enter number of travellers'), NumberRange(min=1, max=50)])
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
+    email = StringField('Email', validators=[DataRequired('Please enter your email'), Email()])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
-    submit = SubmitField('Book Tour')
+    submit = SubmitField('Proceed to Payment')

@@ -56,14 +56,17 @@
                         </div>
                     </div>
                     <div class="row align-items-center">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             {{ tour_form.full_name(class='form-control px-4', style='height: 47px;', placeholder='Full Name') }}
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
+                            {{ tour_form.email(class='form-control px-4', style='height: 47px;', placeholder='Email Address') }}
+                        </div>
+                        <div class="col-md-3 mb-3">
                             {{ tour_form.phone(class='form-control px-4', style='height: 47px;', placeholder='Phone / WhatsApp') }}
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Book Tour</button>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Proceed to Payment</button>
                         </div>
                     </div>
                 </form>

@@ -1,8 +1,10 @@
 import os
 import sqlite3
+import uuid
 from datetime import datetime
-from flask import Flask, request, render_template, redirect, url_for, flash, g
-from forms import ContactForm, BusBookingForm, ApartmentBookingForm, TourBookingForm
+from flask import Flask, request, render_template, redirect, url_for, flash, g, session, jsonify
+from forms import (ContactForm, BusBookingForm, ApartmentBookingForm, TourBookingForm,
+                   get_bus_price, get_apartment_price, TOUR_PRICES)
 
 
 app = Flask(__name__, template_folder='templates')
@@ -25,40 +27,24 @@ def close_db(exception):
         db.close()
 
 
+def generate_reservation_code():
+    return 'EH-' + uuid.uuid4().hex[:8].upper()
+
+
 def init_db():
     db = sqlite3.connect(DATABASE)
     db.execute('''
-        CREATE TABLE IF NOT EXISTS bus_bookings (
+        CREATE TABLE IF NOT EXISTS bookings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            route TEXT NOT NULL,
-            bus_type TEXT NOT NULL,
+            reservation_code TEXT UNIQUE NOT NULL,
+            booking_type TEXT NOT NULL,
+            details TEXT NOT NULL,
             travel_date TEXT NOT NULL,
+            amount INTEGER NOT NULL,
             full_name TEXT NOT NULL,
+            email TEXT NOT NULL,
             phone TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    ''')
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS apartment_bookings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            location TEXT NOT NULL,
-            apartment_type TEXT NOT NULL,
-            checkin_date TEXT NOT NULL,
-            checkout_date TEXT NOT NULL,
-            guests INTEGER NOT NULL,
-            full_name TEXT NOT NULL,
-            phone TEXT NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    ''')
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS tour_bookings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            destination TEXT NOT NULL,
-            depart_date TEXT NOT NULL,
-            travellers INTEGER NOT NULL,
-            full_name TEXT NOT NULL,
-            phone TEXT NOT NULL,
+            payment_status TEXT NOT NULL DEFAULT 'pending',
             created_at TEXT NOT NULL
         )
     ''')
@@ -80,6 +66,18 @@ def init_db():
 def ensure_db():
     if not os.path.exists(DATABASE):
         init_db()
+
+
+# --- API: Price lookup ---
+
+@app.route("/api/bus-price")
+def api_bus_price():
+    route = request.args.get('route', '')
+    bus_type = request.args.get('bus_type', '')
+    if route and bus_type:
+        price = get_bus_price(route, bus_type)
+        return jsonify({'price': price})
+    return jsonify({'price': None})
 
 
 # --- Pages ---
@@ -113,7 +111,6 @@ def tours():
 def contact():
     form = ContactForm()
     form_success = False
-
     if request.method == "POST" and form.validate_on_submit():
         db = get_db()
         db.execute(
@@ -123,25 +120,37 @@ def contact():
         db.commit()
         form_success = True
         form.name.data, form.email.data, form.subject.data, form.message.data = "", "", "", ""
-
     return render_template('contact.html', form=form, form_success=form_success)
 
 
-# --- Booking Handlers ---
+# --- Booking Flow: Step 1 - Validate & show payment page ---
 
 @app.route("/book-bus", methods=["POST"])
 def book_bus():
     form = BusBookingForm()
     if form.validate_on_submit():
+        price = get_bus_price(form.route.data, form.bus_type.data)
+        reservation_code = generate_reservation_code()
+        details = f"{form.bus_type.data} — {form.route.data}"
+
         db = get_db()
         db.execute(
-            'INSERT INTO bus_bookings (route, bus_type, travel_date, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-            (form.route.data, form.bus_type.data, form.travel_date.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+            'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (reservation_code, 'bus', details, form.travel_date.data, price, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
         )
         db.commit()
-        flash('Your quote request has been submitted! We will contact you with pricing shortly.', 'success')
-    else:
-        flash('Please fill in all fields correctly.', 'error')
+
+        return render_template('payment.html',
+            reservation_code=reservation_code,
+            booking_type='Bus Rental',
+            details=details,
+            travel_date=form.travel_date.data,
+            amount=price,
+            full_name=form.full_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+        )
+    flash('Please fill in all fields correctly.', 'error')
     return redirect(url_for('buses'))
 
 
@@ -149,15 +158,30 @@ def book_bus():
 def book_apartment():
     form = ApartmentBookingForm()
     if form.validate_on_submit():
+        price_per_night = get_apartment_price(form.apartment_type.data)
+        details = f"{form.apartment_type.data} — {form.location.data}"
+        reservation_code = generate_reservation_code()
+
         db = get_db()
         db.execute(
-            'INSERT INTO apartment_bookings (location, apartment_type, checkin_date, checkout_date, guests, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            (form.location.data, form.apartment_type.data, form.checkin_date.data, form.checkout_date.data, form.guests.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+            'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (reservation_code, 'apartment', details, f"{form.checkin_date.data} to {form.checkout_date.data}",
+             price_per_night, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
         )
         db.commit()
-        flash('Your apartment booking has been submitted successfully! We will contact you shortly.', 'success')
-    else:
-        flash('Please fill in all fields correctly.', 'error')
+
+        return render_template('payment.html',
+            reservation_code=reservation_code,
+            booking_type='Apartment Stay',
+            details=details,
+            travel_date=f"{form.checkin_date.data} — {form.checkout_date.data}",
+            amount=price_per_night,
+            amount_note='per night',
+            full_name=form.full_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+        )
+    flash('Please fill in all fields correctly.', 'error')
     return redirect(url_for('apartments'))
 
 
@@ -165,16 +189,65 @@ def book_apartment():
 def book_tour():
     form = TourBookingForm()
     if form.validate_on_submit():
+        price = TOUR_PRICES.get('default', 500)
+        details = f"{form.destination.data} — {form.travellers.data} traveller(s)"
+        reservation_code = generate_reservation_code()
+
         db = get_db()
         db.execute(
-            'INSERT INTO tour_bookings (destination, depart_date, travellers, full_name, phone, created_at) VALUES (?, ?, ?, ?, ?, ?)',
-            (form.destination.data, form.depart_date.data, form.travellers.data, form.full_name.data, form.phone.data, datetime.now().isoformat())
+            'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (reservation_code, 'tour', details, form.depart_date.data, price, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
         )
         db.commit()
-        flash('Your tour booking has been submitted successfully! We will contact you shortly.', 'success')
-    else:
-        flash('Please fill in all fields correctly.', 'error')
+
+        return render_template('payment.html',
+            reservation_code=reservation_code,
+            booking_type='Tour Package',
+            details=details,
+            travel_date=form.depart_date.data,
+            amount=price,
+            amount_note='per person',
+            full_name=form.full_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+        )
+    flash('Please fill in all fields correctly.', 'error')
     return redirect(url_for('tours'))
+
+
+# --- Booking Flow: Step 2 - Process payment (placeholder) ---
+
+@app.route("/process-payment/<reservation_code>", methods=["POST"])
+def process_payment(reservation_code):
+    payment_method = request.form.get('payment_method', 'card')
+
+    db = get_db()
+    booking = db.execute('SELECT * FROM bookings WHERE reservation_code = ?', (reservation_code,)).fetchone()
+
+    if not booking:
+        flash('Booking not found.', 'error')
+        return redirect(url_for('home'))
+
+    # --- PLACEHOLDER: This is where Paystack/Flutterwave integration goes ---
+    # For now, we simulate a successful payment
+    db.execute('UPDATE bookings SET payment_status = ? WHERE reservation_code = ?', ('paid', reservation_code))
+    db.commit()
+
+    return redirect(url_for('confirmation', reservation_code=reservation_code))
+
+
+# --- Booking Flow: Step 3 - Confirmation page ---
+
+@app.route("/confirmation/<reservation_code>")
+def confirmation(reservation_code):
+    db = get_db()
+    booking = db.execute('SELECT * FROM bookings WHERE reservation_code = ?', (reservation_code,)).fetchone()
+
+    if not booking:
+        flash('Booking not found.', 'error')
+        return redirect(url_for('home'))
+
+    return render_template('confirmation.html', booking=booking)
 
 
 if __name__ == '__main__':
