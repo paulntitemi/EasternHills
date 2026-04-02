@@ -8,7 +8,8 @@ from forms import ContactForm, BookingForm
 
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', '\xeaF\x0b\xce\xee#9Z\xae\x0e\xbd\x98\x02T\xf7bU\xc7\xfe\xd6cg\x93\xda')
-DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bookings.db')
+IS_VERCEL = os.environ.get('VERCEL', False)
+DATABASE = os.path.join('/tmp' if IS_VERCEL else os.path.dirname(os.path.abspath(__file__)), 'bookings.db')
 
 
 def get_db():
@@ -52,7 +53,10 @@ def init_db():
     db.close()
 
 
-init_db()
+@app.before_request
+def ensure_db():
+    if not os.path.exists(DATABASE):
+        init_db()
 
 
 @app.route("/book", methods=["POST"])
