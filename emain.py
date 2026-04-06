@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from flask import Flask, request, render_template, redirect, url_for, flash, g, session, jsonify
 from forms import (ContactForm, BusBookingForm, ApartmentBookingForm, TourBookingForm,
-                   get_bus_price, get_apartment_price, TOUR_PRICES)
+                   get_bus_price, get_apartment_price, TOUR_PRICES, BUS_PRICE_MAP)
 
 
 app = Flask(__name__, template_folder='templates')
@@ -72,12 +72,32 @@ def ensure_db():
 
 @app.route("/api/bus-price")
 def api_bus_price():
-    route = request.args.get('route', '')
     bus_type = request.args.get('bus_type', '')
-    if route and bus_type:
-        price = get_bus_price(route, bus_type)
-        return jsonify({'price': price})
-    return jsonify({'price': None})
+    trip_type = request.args.get('trip_type', 'one_way')
+    days = int(request.args.get('days', 1) or 1)
+    destinations = request.args.getlist('destinations[]')
+
+    if not bus_type or not destinations:
+        return jsonify({'price': None, 'breakdown': []})
+
+    breakdown = []
+    total = 0
+    for dest in destinations:
+        base = BUS_PRICE_MAP.get(dest, {}).get(bus_type, 0)
+        if base:
+            breakdown.append({'destination': dest, 'base_price': base})
+            total += base
+
+    if trip_type == 'round_trip':
+        total = total * 2
+    total = total * max(days, 1)
+
+    return jsonify({
+        'price': total,
+        'breakdown': breakdown,
+        'trip_type': trip_type,
+        'days': days,
+    })
 
 
 # --- Pages ---
@@ -129,14 +149,35 @@ def contact():
 def book_bus():
     form = BusBookingForm()
     if form.validate_on_submit():
-        price = get_bus_price(form.route.data, form.bus_type.data)
-        reservation_code = generate_reservation_code()
-        details = f"{form.bus_type.data} — {form.route.data}"
+        destinations = request.form.getlist('destinations[]')
+        if not destinations:
+            flash('Please select at least one destination.', 'error')
+            return redirect(url_for('buses'))
 
+        trip_type = form.trip_type.data
+        days = form.days.data or 1
+        total = 0
+        for dest in destinations:
+            total += BUS_PRICE_MAP.get(dest, {}).get(form.bus_type.data, 0)
+        if trip_type == 'round_trip':
+            total *= 2
+        total *= days
+
+        pickup = request.form.get('pickup_point', '')
+        trip_label = 'Round Trip' if trip_type == 'round_trip' else 'One Way'
+        dest_str = ' + '.join(destinations)
+        pickup_str = f"From {pickup} to " if pickup else ''
+        details = f"{form.bus_type.data} — {pickup_str}{dest_str} ({trip_label}, {days} day{'s' if days > 1 else ''})"
+
+        travel_date_str = form.travel_date.data
+        if form.return_date.data:
+            travel_date_str += f" to {form.return_date.data}"
+
+        reservation_code = generate_reservation_code()
         db = get_db()
         db.execute(
             'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (reservation_code, 'bus', details, form.travel_date.data, price, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
+            (reservation_code, 'bus', details, travel_date_str, total, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
         )
         db.commit()
 
@@ -144,8 +185,8 @@ def book_bus():
             reservation_code=reservation_code,
             booking_type='Bus Rental',
             details=details,
-            travel_date=form.travel_date.data,
-            amount=price,
+            travel_date=travel_date_str,
+            amount=total,
             full_name=form.full_name.data,
             email=form.email.data,
             phone=form.phone.data,

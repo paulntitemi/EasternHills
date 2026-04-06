@@ -1,35 +1,80 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, SelectField, IntegerField
-from wtforms.validators import DataRequired, Length, Email, NumberRange
+from wtforms.validators import DataRequired, Length, Email, NumberRange, Optional
 import email_validator
 
 
-BUS_ROUTES = [
-    ('', 'Select Route'),
-    ('Accra to Kumasi', 'Accra to Kumasi'),
-    ('Kumasi to Accra', 'Kumasi to Accra'),
-    ('Accra to Cape Coast', 'Accra to Cape Coast'),
-    ('Cape Coast to Accra', 'Cape Coast to Accra'),
-    ('Accra to Tamale', 'Accra to Tamale'),
-    ('Tamale to Accra', 'Tamale to Accra'),
-    ('Accra to Ho', 'Accra to Ho'),
-    ('Ho to Accra', 'Ho to Accra'),
-    ('Accra to Takoradi', 'Accra to Takoradi'),
-    ('Takoradi to Accra', 'Takoradi to Accra'),
-    ('Kumasi to Tamale', 'Kumasi to Tamale'),
-    ('Tamale to Kumasi', 'Tamale to Kumasi'),
-    ('Accra to Koforidua', 'Accra to Koforidua'),
-    ('Koforidua to Accra', 'Koforidua to Accra'),
-    ('Accra to Sunyani', 'Accra to Sunyani'),
-    ('Sunyani to Accra', 'Sunyani to Accra'),
+# --- Bus Destinations & Pricing (from rate card) ---
+# Each destination: (value, label, coaster_price, hiace_price)
+
+BUS_DESTINATIONS_DATA = [
+    # Greater Accra
+    ('Greater Accra', 'Greater Accra', 1400, 1400),
+    ('Ada', 'Ada', 1450, 1450),
+    # Central Region
+    ('Winneba / Swedru', 'Winneba / Swedru', 1500, 1400),
+    ('Mankessim / Saltpond', 'Mankessim / Saltpond', 1600, 1550),
+    ('Anomabo', 'Anomabo', 1600, 1550),
+    ('Cape Coast', 'Cape Coast', 1700, 1650),
+    ('Assin Fosu Areas', 'Assin Fosu Areas', 1800, 1750),
+    ('Elmina Areas', 'Elmina Areas', 1800, 1750),
+    # Eastern Region
+    ('Aburi', 'Aburi', 1500, 1500),
+    ('Nkawkaw / Kwahu', 'Nkawkaw / Kwahu', 1700, 1600),
+    ('Akosombo', 'Akosombo', 1600, 1500),
+    ('Somanya', 'Somanya', 1500, 1450),
+    ('Nsawam', 'Nsawam', 1500, 1450),
+    ('Kwabeng', 'Kwabeng', 1600, 1500),
+    ('Oda / Koforidua / Kyebi', 'Oda / Koforidua / Kyebi', 1700, 1600),
+    ('Afram Plains / Donkorkrom', 'Afram Plains / Donkorkrom', 2200, 2050),
+    # Volta Region
+    ('Southern Volta Areas', 'Southern Volta Areas', 1800, 1750),
+    ('Northern Volta Areas', 'Northern Volta Areas', 2200, 2000),
+    # Western Region
+    ('Takoradi', 'Takoradi', 2200, 2000),
+    ('Axim Areas', 'Axim Areas', 2700, 2500),
+    ('Western North / Sefwi Areas', 'Western North / Sefwi Areas', 3000, 2800),
+    ('Tarkwa', 'Tarkwa', 3000, 2800),
+    # Bono Region
+    ('Sunyani', 'Sunyani', 3000, 2800),
+    ('Kintampo', 'Kintampo', 3000, 2800),
+    # Ashanti Region
+    ('Kumasi', 'Kumasi', 2200, 2000),
+    # Northern Region
+    ('Northern Region', 'Northern Region', 3700, 3550),
 ]
 
+# Build dropdown choices
+BUS_DESTINATIONS = [('', 'Select Destination')] + [(d[0], d[1]) for d in BUS_DESTINATIONS_DATA]
+
+# Build price lookup: { destination: { bus_type: price } }
+BUS_PRICE_MAP = {}
+for dest, label, coaster, hiace in BUS_DESTINATIONS_DATA:
+    BUS_PRICE_MAP[dest] = {
+        'Coaster Bus': coaster,
+        'Hiace Mini Bus': hiace,
+    }
+
 BUS_TYPES = [
-    ('', 'Select Bus Size'),
-    ('Sprinter (15-seater)', 'Sprinter (15-seater)'),
-    ('Coaster (30-seater)', 'Coaster (30-seater)'),
-    ('Full Coach (50-seater)', 'Full Coach (50-seater)'),
+    ('', 'Select Bus Type'),
+    ('Coaster Bus', 'Coaster Bus'),
+    ('Hiace Mini Bus', 'Hiace Mini Bus'),
 ]
+
+TRIP_TYPES = [
+    ('one_way', 'One Way'),
+    ('round_trip', 'Round Trip'),
+]
+
+
+def get_bus_price(destination, bus_type, trip_type='one_way', days=1):
+    base = BUS_PRICE_MAP.get(destination, {}).get(bus_type, 0)
+    if trip_type == 'round_trip':
+        base = base * 2
+    return base * days
+
+
+# --- Apartment ---
 
 APARTMENT_LOCATIONS = [
     ('', 'Select Location'),
@@ -53,6 +98,19 @@ APARTMENT_TYPES = [
     ('2-Bedroom', '2-Bedroom'),
     ('3-Bedroom', '3-Bedroom'),
 ]
+
+APARTMENT_PRICES = {
+    'Studio': 200,
+    '1-Bedroom': 280,
+    '2-Bedroom': 350,
+    '3-Bedroom': 450,
+}
+
+def get_apartment_price(apartment_type):
+    return APARTMENT_PRICES.get(apartment_type, 250)
+
+
+# --- Tours ---
 
 TOUR_DESTINATIONS = [
     ('', 'Select Destination'),
@@ -99,65 +157,7 @@ TOUR_DESTINATIONS = [
     ('Xavi Bird Sanctuary', 'Xavi Bird Sanctuary'),
 ]
 
-
-# --- Pricing (placeholder rates — adjust as needed) ---
-
-BUS_PRICES = {
-    'Sprinter (15-seater)': {
-        'short': 800,   # Accra-Cape Coast, Accra-Ho, Accra-Koforidua
-        'medium': 1200,  # Accra-Kumasi, Accra-Takoradi, Accra-Sunyani
-        'long': 2500,    # Accra-Tamale, Kumasi-Tamale
-    },
-    'Coaster (30-seater)': {
-        'short': 1500,
-        'medium': 2200,
-        'long': 4000,
-    },
-    'Full Coach (50-seater)': {
-        'short': 2500,
-        'medium': 3500,
-        'long': 6000,
-    },
-}
-
-ROUTE_DISTANCE = {
-    'Accra to Kumasi': 'medium',
-    'Kumasi to Accra': 'medium',
-    'Accra to Cape Coast': 'short',
-    'Cape Coast to Accra': 'short',
-    'Accra to Tamale': 'long',
-    'Tamale to Accra': 'long',
-    'Accra to Ho': 'short',
-    'Ho to Accra': 'short',
-    'Accra to Takoradi': 'medium',
-    'Takoradi to Accra': 'medium',
-    'Kumasi to Tamale': 'long',
-    'Tamale to Kumasi': 'long',
-    'Accra to Koforidua': 'short',
-    'Koforidua to Accra': 'short',
-    'Accra to Sunyani': 'medium',
-    'Sunyani to Accra': 'medium',
-}
-
-APARTMENT_PRICES = {
-    'Studio': 200,
-    '1-Bedroom': 280,
-    '2-Bedroom': 350,
-    '3-Bedroom': 450,
-}
-
-TOUR_PRICES = {
-    'default': 500,
-}
-
-
-def get_bus_price(route, bus_type):
-    distance = ROUTE_DISTANCE.get(route, 'medium')
-    return BUS_PRICES.get(bus_type, {}).get(distance, 1500)
-
-
-def get_apartment_price(apartment_type):
-    return APARTMENT_PRICES.get(apartment_type, 250)
+TOUR_PRICES = {'default': 500}
 
 
 # --- Forms ---
@@ -171,9 +171,11 @@ class ContactForm(FlaskForm):
 
 
 class BusBookingForm(FlaskForm):
-    route = SelectField('Route', choices=BUS_ROUTES, validators=[DataRequired('Please select a route')])
-    bus_type = SelectField('Bus Size', choices=BUS_TYPES, validators=[DataRequired('Please select a bus size')])
+    trip_type = SelectField('Trip Type', choices=TRIP_TYPES, validators=[DataRequired()])
+    bus_type = SelectField('Bus Type', choices=BUS_TYPES, validators=[DataRequired('Please select a bus type')])
     travel_date = StringField('Travel Date', validators=[DataRequired('Please select a travel date')])
+    return_date = StringField('Return Date', validators=[Optional()])
+    days = IntegerField('Number of Days', validators=[DataRequired(), NumberRange(min=1, max=30)])
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
     email = StringField('Email', validators=[DataRequired('Please enter your email'), Email()])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
