@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Eastern Hills | Available Buses{% endblock %}
+{% block nav_buses %}active{% endblock %}
+
+{% block content %}
+    <!-- Search Summary Bar -->
+    <div class="container-fluid" style="background: #7AB730; padding: 30px 0;">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center text-white">
+                <div>
+                    <small class="text-white-50 text-uppercase" style="letter-spacing: 2px;">Your Search</small>
+                    <h4 class="m-0 mt-1">
+                        <i class="fa fa-map-marker-alt mr-2"></i>{{ search.pickup_location }}
+                        <i class="fa fa-arrow-right mx-2" style="font-size: 0.8rem;"></i>
+                        {{ search.destinations|join(' + ') }}
+                    </h4>
+                    <p class="m-0 mt-2">
+                        <i class="fa fa-calendar mr-1"></i>{{ search.travel_date }}{% if search.return_date %} → {{ search.return_date }}{% endif %}
+                        &nbsp;&middot;&nbsp;
+                        <i class="fa fa-clock mr-1"></i>{{ search.days }} day{% if search.days > 1 %}s{% endif %}
+                        &nbsp;&middot;&nbsp;
+                        {{ 'Round Trip' if search.trip_type == 'round_trip' else 'One Way' }}
+                    </p>
+                </div>
+                <div>
+                    <a href="/buses" class="btn btn-outline-light mt-2"><i class="fa fa-edit mr-1"></i>Modify Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Results Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="text-center mb-4">
+                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Available Buses</h6>
+                <h1>Choose Your Ride</h1>
+                <p class="text-muted">Showing {{ results|length }} available buses for your trip</p>
+            </div>
+
+            {% for bus in results %}
+            <div class="bg-white shadow-sm mb-4 p-4" style="border-left: 4px solid #7AB730;">
+                <div class="row align-items-center">
+                    <!-- Image -->
+                    <div class="col-md-3 text-center mb-3 mb-md-0">
+                        {% if bus.image %}
+                        <img src="{{ bus.image }}" alt="{{ bus.name }}" class="img-fluid" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px;">
+                        {% else %}
+                        <div class="d-inline-flex align-items-center justify-content-center" style="width: 100%; height: 160px; border-radius: 8px; background: linear-gradient(135deg, #7AB730, #5f8f25);">
+                            <i class="fa fa-4x fa-{{ bus.icon|default('bus') }} text-white"></i>
+                        </div>
+                        {% endif %}
+                        <p class="mt-2 mb-0 text-muted" style="font-size: 0.8rem;">{{ bus.category }}</p>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h4 class="mb-1">{{ bus.name }}</h4>
+                        <p class="text-muted mb-3" style="font-size: 0.9rem;">{{ bus.description }}</p>
+                        <div class="d-flex flex-wrap">
+                            <span class="mr-4 mb-2"><i class="fa fa-users text-primary mr-1"></i><small>{{ bus.seats }} seats</small></span>
+                            <span class="mr-4 mb-2"><i class="fa fa-briefcase text-primary mr-1"></i><small>{{ bus.luggage }} bags</small></span>
+                            <span class="mr-4 mb-2"><i class="fa fa-cog text-primary mr-1"></i><small>{{ bus.transmission }}</small></span>
+                            {% if bus.ac %}<span class="mr-4 mb-2"><i class="fa fa-snowflake text-primary mr-1"></i><small>AC</small></span>{% endif %}
+                        </div>
+                        <div class="mt-2">
+                            {% for feature in bus.features %}
+                            <span class="badge badge-light border mr-1 mb-1 px-2 py-1" style="font-size: 0.75rem;"><i class="fa fa-check text-primary mr-1"></i>{{ feature }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Price & Action -->
+                    <div class="col-md-3 text-center text-md-right">
+                        <small class="text-muted text-uppercase" style="letter-spacing: 1px;">Total</small>
+                        <h2 class="text-primary font-weight-bold m-0">GHS {{ "{:,}".format(bus.price) }}</h2>
+                        <small class="text-muted d-block mb-3">incl. driver &amp; fuel</small>
+                        <a href="{{ url_for('buses_select', model_id=bus.id) }}" class="btn btn-primary btn-block">Select <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-4">
+                <a href="/buses" class="btn btn-outline-primary"><i class="fa fa-arrow-left mr-2"></i>Back to Search</a>
+            </div>
+        </div>
+    </div>
+    <!-- Results End -->
+{% endblock %}

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Eastern Hills | Complete Your Booking{% endblock %}
+{% block nav_buses %}active{% endblock %}
+
+{% block content %}
+    <!-- Progress Bar -->
+    <div class="container-fluid" style="background: #7AB730; padding: 20px 0;">
+        <div class="container">
+            <div class="d-flex justify-content-center text-white">
+                <div class="text-center mx-3">
+                    <i class="fa fa-check-circle" style="font-size: 1.5rem;"></i>
+                    <div><small>Search</small></div>
+                </div>
+                <div class="text-center mx-3" style="border-top: 2px solid white; width: 50px; margin-top: 12px;"></div>
+                <div class="text-center mx-3">
+                    <i class="fa fa-check-circle" style="font-size: 1.5rem;"></i>
+                    <div><small>Select Bus</small></div>
+                </div>
+                <div class="text-center mx-3" style="border-top: 2px solid white; width: 50px; margin-top: 12px;"></div>
+                <div class="text-center mx-3" style="opacity: 1;">
+                    <i class="fa fa-circle-notch" style="font-size: 1.5rem;"></i>
+                    <div><strong><small>Checkout</small></strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Checkout Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row">
+                <!-- Left: Form -->
+                <div class="col-lg-8">
+                    <h2 class="mb-4">Complete Your Booking</h2>
+
+                    <form method="POST" action="/buses/checkout" id="checkout-form">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Extras Section -->
+                        <div class="bg-white shadow-sm p-4 mb-4">
+                            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 2px;">Add Extras <small class="text-muted" style="letter-spacing: 0; text-transform: none;">(Optional)</small></h5>
+                            {% for extra in extras %}
+                            <div class="custom-control custom-checkbox mb-3 p-3 border rounded">
+                                <input type="checkbox" class="custom-control-input extra-checkbox" id="extra-{{ extra.id }}" name="extras[]" value="{{ extra.id }}" data-price="{{ extra.price }}" {% if extra.id in selected_extras %}checked{% endif %}>
+                                <label class="custom-control-label w-100" for="extra-{{ extra.id }}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ extra.name }}</strong>
+                                            <div class="text-muted" style="font-size: 0.85rem;">{{ extra.description }}</div>
+                                        </div>
+                                        <span class="text-primary font-weight-bold">+ GHS {{ "{:,}".format(extra.price) }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Driver Details -->
+                        <div class="bg-white shadow-sm p-4 mb-4">
+                            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 2px;">Your Details</h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    {{ form.full_name(class='form-control p-4', placeholder='Full Name') }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.email(class='form-control p-4', placeholder='Email Address') }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    {{ form.phone(class='form-control p-4', placeholder='Phone / WhatsApp') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="bg-white shadow-sm p-4 mb-4">
+                            <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 2px;">Payment Method</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="d-block mb-0" style="cursor: pointer;">
+                                        <input type="radio" name="payment_method" value="card" checked class="d-none pay-radio">
+                                        <div class="border rounded p-4 text-center pay-option border-primary">
+                                            <i class="fa fa-2x fa-credit-card text-primary mb-2"></i>
+                                            <h6 class="m-0">Credit / Debit Card</h6>
+                                            <small class="text-muted">Visa, Mastercard</small>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="d-block mb-0" style="cursor: pointer;">
+                                        <input type="radio" name="payment_method" value="momo" class="d-none pay-radio">
+                                        <div class="border rounded p-4 text-center pay-option">
+                                            <i class="fa fa-2x fa-mobile-alt text-primary mb-2"></i>
+                                            <h6 class="m-0">Mobile Money</h6>
+                                            <small class="text-muted">MTN, Vodafone, AirtelTigo</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="custom-control custom-checkbox mt-3">
+                                <input type="checkbox" class="custom-control-input" id="agree-terms" required>
+                                <label class="custom-control-label" for="agree-terms">I agree to the <a href="#" class="text-primary">Terms &amp; Conditions</a> and <a href="#" class="text-primary">Privacy Policy</a></label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block py-3" style="font-size: 1.15rem;">
+                            <i class="fa fa-lock mr-2"></i>Pay GHS <span id="btn-total">{{ "{:,}".format(total) }}</span> Securely
+                        </button>
+                        <p class="text-muted text-center mt-3 mb-0"><i class="fa fa-shield-alt mr-1"></i> Your payment is secured with 256-bit encryption</p>
+                    </form>
+                </div>
+
+                <!-- Right: Summary Sidebar -->
+                <div class="col-lg-4 mt-4 mt-lg-0">
+                    <div class="bg-white shadow-sm p-4" style="position: sticky; top: 20px;">
+                        <h5 class="text-primary text-uppercase mb-3" style="letter-spacing: 2px;">Your Selection</h5>
+
+                        <!-- Bus Summary -->
+                        <div class="text-center mb-3 pb-3 border-bottom">
+                            {% if model.image %}
+                            <img src="{{ model.image }}" alt="{{ model.name }}" class="img-fluid mb-2" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                            {% else %}
+                            <div class="d-inline-flex align-items-center justify-content-center mb-2" style="width: 100%; height: 120px; border-radius: 8px; background: linear-gradient(135deg, #7AB730, #5f8f25);">
+                                <i class="fa fa-3x fa-{{ model.icon|default('bus') }} text-white"></i>
+                            </div>
+                            {% endif %}
+                            <h5 class="m-0">{{ model.name }}</h5>
+                            <small class="text-muted">{{ model.category }} &middot; {{ model.seats }} seats</small>
+                        </div>
+
+                        <!-- Trip Details -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Pickup</small>
+                                <small class="font-weight-bold">{{ search.pickup_location }}</small>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Destinations</small>
+                                <small class="font-weight-bold text-right">{{ search.destinations|join(', ') }}</small>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Trip Type</small>
+                                <small class="font-weight-bold">{{ 'Round Trip' if search.trip_type == 'round_trip' else 'One Way' }}</small>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Departure</small>
+                                <small class="font-weight-bold">{{ search.travel_date }}</small>
+                            </div>
+                            {% if search.return_date %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Return</small>
+                                <small class="font-weight-bold">{{ search.return_date }}</small>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Duration</small>
+                                <small class="font-weight-bold">{{ search.days }} day{% if search.days > 1 %}s{% endif %}</small>
+                            </div>
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small>Bus rental</small>
+                                <small>GHS {{ "{:,}".format(base_price) }}</small>
+                            </div>
+                            <div id="sidebar-extras">
+                                {% if extras_total > 0 %}
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Extras</small>
+                                    <small>GHS {{ "{:,}".format(extras_total) }}</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                                <h6 class="m-0">Total</h6>
+                                <h5 class="m-0 text-primary font-weight-bold">GHS <span id="sidebar-total">{{ "{:,}".format(total) }}</span></h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(function() {
+    var basePrice = {{ base_price }};
+
+    // Payment method card selection
+    $('.pay-option').on('click', function() {
+        $('.pay-option').removeClass('border-primary');
+        $(this).addClass('border-primary');
+        $(this).closest('label').find('.pay-radio').prop('checked', true);
+    });
+
+    // Live extras calculation
+    function updateTotal() {
+        var extrasTotal = 0;
+        $('.extra-checkbox:checked').each(function() {
+            extrasTotal += parseInt($(this).data('price'));
+        });
+        var total = basePrice + extrasTotal;
+        $('#sidebar-total').text(total.toLocaleString());
+        $('#btn-total').text(total.toLocaleString());
+
+        if (extrasTotal > 0) {
+            $('#sidebar-extras').html('<div class="d-flex justify-content-between mb-2"><small>Extras</small><small>GHS ' + extrasTotal.toLocaleString() + '</small></div>');
+        } else {
+            $('#sidebar-extras').html('');
+        }
+    }
+    $('.extra-checkbox').on('change', updateTotal);
+});
+</script>
+{% endblock %}

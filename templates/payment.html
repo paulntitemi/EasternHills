@@ -33,7 +33,7 @@
                             </div>
                             <div class="row mb-2">
                                 <div class="col-5 text-muted">Details</div>
-                                <div class="col-7 font-weight-bold">{{ details }}</div>
+                                <div class="col-7 font-weight-bold">{% for line in details.split('\n') %}{{ line }}<br>{% endfor %}</div>
                             </div>
                             <div class="row mb-2">
                                 <div class="col-5 text-muted">Date</div>

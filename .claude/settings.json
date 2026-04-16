@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:si-xt-vxcy.vercel.app)",
+      "Bash(curl -s https://si-xt-vxcy.vercel.app/)",
+      "Bash(curl -s https://si-xt-vxcy.vercel.app/assets/index-B-9Wgqy0.js)",
+      "Bash(curl -sL https://si-xt-vxcy.vercel.app/search)",
+      "Bash(curl -sL https://si-xt-vxcy.vercel.app/checkout)",
+      "Bash(grep -oE '\"[A-Z][a-zA-Z ]{3,40}\"')",
+      "Bash(grep -oE '\"[A-Z][a-zA-Z ]{3,50}\"')",
+      "Bash(grep -oE '\"[A-Za-z][a-zA-Z ]{3,50}\"')",
+      "Bash(grep -oE '\"[A-Z][a-zA-Z ]{3,80}\"')",
+      "Bash(mkdir -p \"/Users/tems/eHills New/EasternHills/static/img/buses\")",
+      "Bash(curl -sS -L -o hiace.jpg \"https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=800&q=80\")",
+      "Bash(curl -sS -L -o \"sprinter.jpg\" \"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80\")",
+      "Bash(curl -sS -L -o \"coaster.jpg\" \"https://images.unsplash.com/photo-1605859859219-d5c2fabbd60e?w=800&q=80\")",
+      "Bash(curl -sS -L -o \"yutong.jpg\" \"https://images.unsplash.com/photo-1556122071-e404cb6f31c0?w=800&q=80\")",
+      "Bash(curl -sS -L -o \"tourismo.jpg\" \"https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80\")",
+      "Bash(rm coaster.jpg yutong.jpg)",
+      "Bash(curl -sS -L -o \"coaster.jpg\" \"https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80\")",
+      "Bash(curl -sS -L -o \"yutong.jpg\" \"https://images.unsplash.com/photo-1494976388901-b3f6ebea5ce1?w=800&q=80\")",
+      "Bash(curl -sS \"https://www.pexels.com/search/tour%20bus/\" -A \"Mozilla/5.0\" -H \"Accept: text/html\")",
+      "Bash(curl -sS \"https://pixabay.com/api/?key=47025681-e61f0b8b2d0e28c7f1a2d891f&q=tour+bus&image_type=photo&per_page=5\")",
+      "Bash(python3 -c \" import json, sys data = json.load\\(sys.stdin\\) for hit in data.get\\('hits', []\\): print\\(hit.get\\('webformatURL', ''\\)\\) \")",
+      "Bash(curl -sS -L -o \"hiace_new.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/2019_Toyota_HiAce_2.8_GDH300R_%2820190616%29.jpg/800px-2019_Toyota_HiAce_2.8_GDH300R_%2820190616%29.jpg\")",
+      "Bash(curl -sS -L -o \"sprinter.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/2019_Mercedes-Benz_Sprinter_%28W907%29_311_CDI_van%2C_front_2.13.20.jpg/800px-2019_Mercedes-Benz_Sprinter_%28W907%29_311_CDI_van%2C_front_2.13.20.jpg\")",
+      "Bash(curl -sS -L -o \"coaster.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Toyota_Coaster_XZB70_001.jpg/800px-Toyota_Coaster_XZB70_001.jpg\")",
+      "Bash(curl -sS -L -o \"yutong.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Yutong_ZK6120R41.jpg/800px-Yutong_ZK6120R41.jpg\")",
+      "Bash(curl -sS -L -o \"tourismo.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Mercedes-Benz_Tourismo_%28O_350%29.jpg/800px-Mercedes-Benz_Tourismo_%28O_350%29.jpg\")",
+      "Bash(python3 -c \" import json,sys try: data = json.load\\(sys.stdin\\) for r in data.get\\('results', []\\): urls = r.get\\('urls', {}\\) print\\(r.get\\('id',''\\), urls.get\\('small',''\\)\\) except: pass \")",
+      "WebFetch(domain:unsplash.com)"
+    ]
+  }
+}

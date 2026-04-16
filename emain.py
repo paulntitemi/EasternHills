@@ -3,8 +3,9 @@ import sqlite3
 import uuid
 from datetime import datetime
 from flask import Flask, request, render_template, redirect, url_for, flash, g, session, jsonify
-from forms import (ContactForm, BusBookingForm, ApartmentBookingForm, TourBookingForm,
-                   get_bus_price, get_apartment_price, TOUR_PRICES, BUS_PRICE_MAP)
+from forms import (ContactForm, BusSearchForm, BusCheckoutForm, ApartmentBookingForm, TourBookingForm,
+                   get_bus_price, get_apartment_price, TOUR_PRICES, BUS_PRICE_MAP,
+                   BUS_MODELS, BUS_EXTRAS, get_bus_model, get_bus_extra, calculate_bus_total)
 
 
 app = Flask(__name__, template_folder='templates')
@@ -114,7 +115,132 @@ def index():
 
 @app.route("/buses")
 def buses():
-    return render_template('buses.html', bus_form=BusBookingForm())
+    return render_template('buses.html', search_form=BusSearchForm())
+
+
+@app.route("/buses/search", methods=["POST"])
+def buses_search():
+    form = BusSearchForm()
+    destinations = request.form.getlist('destinations[]')
+
+    if not form.validate_on_submit() or not destinations:
+        if not destinations:
+            flash('Please select at least one destination.', 'error')
+        else:
+            flash('Please fill in all required fields.', 'error')
+        return redirect(url_for('buses'))
+
+    session['bus_search'] = {
+        'trip_type': form.trip_type.data,
+        'pickup_location': form.pickup_location.data,
+        'destinations': destinations,
+        'travel_date': form.travel_date.data,
+        'return_date': form.return_date.data or '',
+        'days': form.days.data,
+    }
+    return redirect(url_for('buses_results'))
+
+
+@app.route("/buses/results")
+def buses_results():
+    search = session.get('bus_search')
+    if not search:
+        flash('Please start a new search.', 'error')
+        return redirect(url_for('buses'))
+
+    # Calculate price for each model
+    results = []
+    for model in BUS_MODELS:
+        price = calculate_bus_total(
+            model['id'],
+            search['destinations'],
+            search['trip_type'],
+            search['days']
+        )
+        results.append({**model, 'price': price})
+
+    return render_template('buses_results.html', search=search, results=results)
+
+
+@app.route("/buses/select/<model_id>")
+def buses_select(model_id):
+    search = session.get('bus_search')
+    if not search:
+        return redirect(url_for('buses'))
+
+    model = get_bus_model(model_id)
+    if not model:
+        flash('Invalid bus selection.', 'error')
+        return redirect(url_for('buses_results'))
+
+    session['bus_selection'] = model_id
+    return redirect(url_for('buses_checkout'))
+
+
+@app.route("/buses/checkout", methods=["GET", "POST"])
+def buses_checkout():
+    search = session.get('bus_search')
+    model_id = session.get('bus_selection')
+    if not search or not model_id:
+        return redirect(url_for('buses'))
+
+    model = get_bus_model(model_id)
+    if not model:
+        return redirect(url_for('buses_results'))
+
+    form = BusCheckoutForm()
+    selected_extras = request.form.getlist('extras[]') if request.method == 'POST' else []
+
+    base_price = calculate_bus_total(model_id, search['destinations'], search['trip_type'], search['days'])
+    extras_total = sum(get_bus_extra(e)['price'] for e in selected_extras if get_bus_extra(e))
+    total = base_price + extras_total
+
+    if request.method == "POST" and form.validate_on_submit():
+        trip_label = 'Round Trip' if search['trip_type'] == 'round_trip' else 'One Way'
+        dest_str = ', '.join(search['destinations'])
+        days = search['days']
+        lines = [
+            model['name'],
+            f"{search['pickup_location']} — {dest_str}",
+            trip_label,
+            f"{days} day{'s' if days > 1 else ''}",
+        ]
+        if selected_extras:
+            lines.append('Extras:')
+            for eid in selected_extras:
+                extra = get_bus_extra(eid)
+                if extra:
+                    lines.append(extra['name'])
+        details = '\n'.join(lines)
+
+        travel_date_str = search['travel_date']
+        if search.get('return_date'):
+            travel_date_str += f" to {search['return_date']}"
+
+        reservation_code = generate_reservation_code()
+        db = get_db()
+        db.execute(
+            'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            (reservation_code, 'bus', details, travel_date_str, total, form.full_name.data, form.email.data, form.phone.data, 'paid', datetime.now().isoformat())
+        )
+        db.commit()
+
+        # Clear session
+        session.pop('bus_search', None)
+        session.pop('bus_selection', None)
+
+        return redirect(url_for('confirmation', reservation_code=reservation_code))
+
+    return render_template('buses_checkout.html',
+        search=search,
+        model=model,
+        base_price=base_price,
+        extras=BUS_EXTRAS,
+        selected_extras=selected_extras,
+        extras_total=extras_total,
+        total=total,
+        form=form,
+    )
 
 
 @app.route("/apartments")
@@ -143,57 +269,7 @@ def contact():
     return render_template('contact.html', form=form, form_success=form_success)
 
 
-# --- Booking Flow: Step 1 - Validate & show payment page ---
-
-@app.route("/book-bus", methods=["POST"])
-def book_bus():
-    form = BusBookingForm()
-    if form.validate_on_submit():
-        destinations = request.form.getlist('destinations[]')
-        if not destinations:
-            flash('Please select at least one destination.', 'error')
-            return redirect(url_for('buses'))
-
-        trip_type = form.trip_type.data
-        days = form.days.data or 1
-        total = 0
-        for dest in destinations:
-            total += BUS_PRICE_MAP.get(dest, {}).get(form.bus_type.data, 0)
-        if trip_type == 'round_trip':
-            total *= 2
-        total *= days
-
-        pickup = request.form.get('pickup_point', '')
-        trip_label = 'Round Trip' if trip_type == 'round_trip' else 'One Way'
-        dest_str = ' + '.join(destinations)
-        pickup_str = f"From {pickup} to " if pickup else ''
-        details = f"{form.bus_type.data} — {pickup_str}{dest_str} ({trip_label}, {days} day{'s' if days > 1 else ''})"
-
-        travel_date_str = form.travel_date.data
-        if form.return_date.data:
-            travel_date_str += f" to {form.return_date.data}"
-
-        reservation_code = generate_reservation_code()
-        db = get_db()
-        db.execute(
-            'INSERT INTO bookings (reservation_code, booking_type, details, travel_date, amount, full_name, email, phone, payment_status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            (reservation_code, 'bus', details, travel_date_str, total, form.full_name.data, form.email.data, form.phone.data, 'pending', datetime.now().isoformat())
-        )
-        db.commit()
-
-        return render_template('payment.html',
-            reservation_code=reservation_code,
-            booking_type='Bus Rental',
-            details=details,
-            travel_date=travel_date_str,
-            amount=total,
-            full_name=form.full_name.data,
-            email=form.email.data,
-            phone=form.phone.data,
-        )
-    flash('Please fill in all fields correctly.', 'error')
-    return redirect(url_for('buses'))
-
+# --- Apartment & Tour Booking (legacy single-step flow) ---
 
 @app.route("/book-apartment", methods=["POST"])
 def book_apartment():

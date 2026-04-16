@@ -59,7 +59,9 @@
                         <div class="row mb-3">
                             <div class="col-12 mb-3">
                                 <small class="text-muted text-uppercase" style="letter-spacing: 2px;">Details</small>
-                                <h6 class="font-weight-bold mt-1">{{ booking['details'] }}</h6>
+                                {% for line in booking['details'].split('\n') %}
+                                <h6 class="font-weight-bold mt-1 mb-0">{{ line }}</h6>
+                                {% endfor %}
                             </div>
                         </div>
 

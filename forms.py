@@ -66,6 +66,135 @@ TRIP_TYPES = [
     ('round_trip', 'Round Trip'),
 ]
 
+# Pickup locations for the search widget
+PICKUP_LOCATIONS = [
+    ('', 'Select Pick-up Location'),
+    ('Accra', 'Accra'),
+    ('Tema', 'Tema'),
+    ('Kumasi', 'Kumasi'),
+    ('Takoradi', 'Takoradi'),
+    ('Cape Coast', 'Cape Coast'),
+    ('Tamale', 'Tamale'),
+    ('Koforidua', 'Koforidua'),
+    ('Ho', 'Ho'),
+    ('Sunyani', 'Sunyani'),
+]
+
+# Fleet: actual bus models grouped by pricing tier
+BUS_MODELS = [
+    {
+        'id': 'toyota-hiace',
+        'name': 'Toyota Hiace',
+        'tier': 'Hiace Mini Bus',
+        'category': 'Mini Bus',
+        'seats': 15,
+        'luggage': 10,
+        'transmission': 'Manual',
+        'ac': True,
+        'icon': 'fa-shuttle-van',
+        'image': None,
+        'features': ['Air Conditioning', 'Reclining Seats', 'Driver Included', 'Fuel Included'],
+        'description': 'Compact and reliable. Perfect for small groups, family trips, and corporate outings.',
+    },
+    {
+        'id': 'mercedes-sprinter',
+        'name': 'Mercedes-Benz Sprinter',
+        'tier': 'Hiace Mini Bus',
+        'category': 'Mini Bus',
+        'seats': 16,
+        'luggage': 12,
+        'transmission': 'Manual',
+        'ac': True,
+        'icon': 'fa-shuttle-van',
+        'image': None,
+        'features': ['Air Conditioning', 'Premium Interior', 'Driver Included', 'Fuel Included'],
+        'description': 'Premium European comfort for small groups. Smooth ride and quiet cabin.',
+    },
+    {
+        'id': 'toyota-coaster',
+        'name': 'Toyota Coaster',
+        'tier': 'Coaster Bus',
+        'category': 'Coach',
+        'seats': 30,
+        'luggage': 20,
+        'transmission': 'Manual',
+        'ac': True,
+        'icon': 'fa-bus',
+        'image': '/static/img/buses/coaster.jpg',
+        'features': ['Air Conditioning', 'Overhead Storage', 'Driver Included', 'Fuel Included'],
+        'description': 'Reliable mid-size coach. Ideal for church trips, school excursions and events.',
+    },
+    {
+        'id': 'yutong-coach',
+        'name': 'Yutong Coach',
+        'tier': 'Coaster Bus',
+        'category': 'Coach',
+        'seats': 35,
+        'luggage': 25,
+        'transmission': 'Automatic',
+        'ac': True,
+        'icon': 'fa-bus-alt',
+        'image': '/static/img/buses/yutong.jpg',
+        'features': ['Air Conditioning', 'Reclining Seats', 'Driver Included', 'Fuel Included'],
+        'description': 'Modern Chinese-built coach. Automatic transmission and spacious luggage hold.',
+    },
+    {
+        'id': 'mercedes-tourismo',
+        'name': 'Mercedes-Benz Tourismo',
+        'tier': 'Coaster Bus',
+        'category': 'Luxury Coach',
+        'seats': 45,
+        'luggage': 35,
+        'transmission': 'Automatic',
+        'ac': True,
+        'icon': 'fa-bus-alt',
+        'image': '/static/img/buses/tourismo.jpg',
+        'features': ['Premium AC', 'Reclining Seats', 'Driver Included', 'Fuel Included', 'On-Board Restroom'],
+        'description': 'Our flagship luxury coach. Perfect for weddings, conferences, and long-distance travel.',
+    },
+]
+
+
+def get_bus_model(model_id):
+    for m in BUS_MODELS:
+        if m['id'] == model_id:
+            return m
+    return None
+
+
+# Optional extras added at checkout
+BUS_EXTRAS = [
+    {'id': 'refreshments', 'name': 'Refreshments Package', 'description': 'Bottled water and light snacks for all passengers', 'price': 150},
+    {'id': 'extended_hours', 'name': 'Extended Hours', 'description': 'Additional hours beyond standard 12-hour day rate', 'price': 300},
+    {'id': 'priority_support', 'name': 'Priority Support', 'description': '24/7 dedicated hotline during your trip', 'price': 100},
+    {'id': 'additional_stop', 'name': 'Additional Pickup Stop', 'description': 'One extra pickup point along the way', 'price': 200},
+]
+
+
+def get_bus_extra(extra_id):
+    for e in BUS_EXTRAS:
+        if e['id'] == extra_id:
+            return e
+    return None
+
+
+def calculate_bus_total(model_id, destinations, trip_type='one_way', days=1, extras=None):
+    model = get_bus_model(model_id)
+    if not model:
+        return 0
+    base = 0
+    for dest in destinations:
+        base += BUS_PRICE_MAP.get(dest, {}).get(model['tier'], 0)
+    if trip_type == 'round_trip':
+        base *= 2
+    base *= max(days, 1)
+    if extras:
+        for extra_id in extras:
+            extra = get_bus_extra(extra_id)
+            if extra:
+                base += extra['price']
+    return base
+
 
 def get_bus_price(destination, bus_type, trip_type='one_way', days=1):
     base = BUS_PRICE_MAP.get(destination, {}).get(bus_type, 0)
@@ -170,16 +299,20 @@ class ContactForm(FlaskForm):
     submit = SubmitField("SEND")
 
 
-class BusBookingForm(FlaskForm):
-    trip_type = SelectField('Trip Type', choices=TRIP_TYPES, validators=[DataRequired()])
-    bus_type = SelectField('Bus Type', choices=BUS_TYPES, validators=[DataRequired('Please select a bus type')])
+class BusSearchForm(FlaskForm):
+    trip_type = SelectField('Trip Type', choices=TRIP_TYPES, default='one_way', validators=[DataRequired()])
+    pickup_location = SelectField('Pick-up Location', choices=PICKUP_LOCATIONS, validators=[DataRequired('Please select a pick-up location')])
     travel_date = StringField('Travel Date', validators=[DataRequired('Please select a travel date')])
     return_date = StringField('Return Date', validators=[Optional()])
     days = IntegerField('Number of Days', validators=[DataRequired(), NumberRange(min=1, max=30)])
+    submit = SubmitField('Search Buses')
+
+
+class BusCheckoutForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired('Please enter your full name'), Length(min=2, max=100)])
     email = StringField('Email', validators=[DataRequired('Please enter your email'), Email()])
     phone = StringField('Phone', validators=[DataRequired('Please enter your phone number'), Length(min=7, max=20)])
-    submit = SubmitField('Proceed to Payment')
+    submit = SubmitField('Complete Booking')
 
 
 class ApartmentBookingForm(FlaskForm):

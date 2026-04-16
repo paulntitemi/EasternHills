@@ -3,11 +3,11 @@
 {% block nav_buses %}active{% endblock %}
 
 {% block content %}
-    <!-- Header Start -->
+    <!-- Hero Header Start -->
     <div class="container-fluid page-header">
         <div class="container">
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
-                <h3 class="display-4 text-white text-uppercase">Bus Rental</h3>
+                <h3 class="display-4 text-white text-uppercase">Rent a Bus</h3>
                 <div class="d-inline-flex text-white">
                     <p class="m-0 text-uppercase"><a class="text-white" href="/">Home</a></p>
                     <i class="fa fa-angle-double-right pt-1 px-3"></i>
@@ -16,15 +16,16 @@
             </div>
         </div>
     </div>
-    <!-- Header End -->
+    <!-- Hero Header End -->
 
 
-    <!-- Bus Booking Start -->
+    <!-- Search Widget Start -->
     <div class="container-fluid booking mt-5 pb-5">
         <div class="container pb-5">
             <div class="bg-light shadow" style="padding: 30px;">
-                <h6 class="text-primary text-uppercase text-center mb-3" style="letter-spacing: 5px;">Rent a Bus With Driver</h6>
-                <p class="text-center text-muted mb-4">Select your destinations, bus type, and dates. Prices include driver and fuel.</p>
+                <h6 class="text-primary text-uppercase text-center mb-3" style="letter-spacing: 5px;">Find Your Bus</h6>
+                <p class="text-center text-muted mb-4">Tell us where you're going. We'll show you available buses and instant prices.</p>
+
                 {% with messages = get_flashed_messages(category_filter=['error']) %}
                 {% if messages %}
                 <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
@@ -33,10 +34,11 @@
                 </div>
                 {% endif %}
                 {% endwith %}
-                <form method="POST" action="/book-bus" id="bus-form">
-                    {{ bus_form.hidden_tag() }}
 
-                    <!-- Row 1: Trip type toggle + Bus type -->
+                <form method="POST" action="/buses/search" id="bus-search-form">
+                    {{ search_form.hidden_tag() }}
+
+                    <!-- Row 1: Trip type + Pickup location + Days -->
                     <div class="row align-items-center mb-3">
                         <div class="col-md-4 mb-3">
                             <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
@@ -49,38 +51,18 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            {{ bus_form.bus_type(class='custom-select px-4', style='height: 47px;', id='bus-type') }}
+                            {{ search_form.pickup_location(class='custom-select px-4', style='height: 47px;', id='pickup-location') }}
                         </div>
                         <div class="col-md-4 mb-3">
-                            {{ bus_form.days(class='form-control px-4', style='height: 47px;', placeholder='Number of Days', min='1', max='30', id='bus-days', value='') }}
+                            {{ search_form.days(class='form-control px-4', style='height: 47px;', placeholder='Number of Days', min='1', max='30', id='bus-days') }}
                         </div>
                     </div>
 
-                    <!-- Pick-up Point -->
+                    <!-- Row 2: Destinations multi-select -->
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label class="text-muted mb-2"><small>PICK-UP POINT</small></label>
-                            <select name="pickup_point" id="pickup-point" class="custom-select px-4" style="height: 47px;">
-                                <option value="" selected>Select Pick-up Location</option>
-                                <option value="Accra">Accra</option>
-                                <option value="Tema">Tema</option>
-                                <option value="Kumasi">Kumasi</option>
-                                <option value="Takoradi">Takoradi</option>
-                                <option value="Cape Coast">Cape Coast</option>
-                                <option value="Tamale">Tamale</option>
-                                <option value="Koforidua">Koforidua</option>
-                                <option value="Ho">Ho</option>
-                                <option value="Sunyani">Sunyani</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Destinations (multi-select) -->
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <label class="text-muted mb-2"><small>SELECT DESTINATION(S) — choose one or more stops</small></label>
-                            <div class="bg-white border rounded p-3" style="max-height: 250px; overflow-y: auto;">
-                                {% for dest_val, dest_label in bus_form.bus_type.choices %}{% endfor %}
+                            <label class="text-muted mb-2"><small>DESTINATION(S) — CHOOSE ONE OR MORE STOPS</small></label>
+                            <div class="bg-white border rounded p-3" style="max-height: 260px; overflow-y: auto;">
                                 {% set regions = [
                                     ('Greater Accra', ['Greater Accra', 'Ada']),
                                     ('Central Region', ['Winneba / Swedru', 'Mankessim / Saltpond', 'Anomabo', 'Cape Coast', 'Assin Fosu Areas', 'Elmina Areas']),
@@ -124,74 +106,19 @@
                         </div>
                     </div>
 
-                    <!-- Live Price Display -->
-                    <div class="row mb-3" id="price-display" style="display: none;">
-                        <div class="col-12">
-                            <div class="bg-white border border-primary rounded p-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="text-muted" id="price-label">Your rate</span>
-                                        <div id="price-breakdown" class="mt-1" style="font-size: 0.85rem;"></div>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="h3 text-primary font-weight-bold" id="price-amount">GHS 0</span>
-                                        <br><small class="text-muted">includes driver &amp; fuel</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 4: Customer details -->
-                    <div class="row align-items-center">
-                        <div class="col-md-3 mb-3">
-                            {{ bus_form.full_name(class='form-control px-4', style='height: 47px;', placeholder='Full Name') }}
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            {{ bus_form.email(class='form-control px-4', style='height: 47px;', placeholder='Email Address') }}
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            {{ bus_form.phone(class='form-control px-4', style='height: 47px;', placeholder='Phone / WhatsApp') }}
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Proceed to Payment</button>
+                    <!-- Submit -->
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <button class="btn btn-primary btn-block" type="submit" style="height: 50px; font-size: 1.1rem;">
+                                <i class="fa fa-search mr-2"></i>Search Available Buses
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <!-- Bus Booking End -->
-
-
-    <!-- Fleet Start -->
-    <div class="container-fluid py-5">
-        <div class="container pt-5 pb-3">
-            <div class="text-center mb-3 pb-3">
-                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Our Fleet</h6>
-                <h1>Choose Your Bus</h1>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-5 col-md-6 mb-4">
-                    <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-bus mx-auto mb-4"></i>
-                        <h5 class="mb-2">Coaster Bus</h5>
-                        <p class="m-0">Our flagship bus for medium to large groups. Spacious seating, overhead luggage storage, and full air-conditioning. Ideal for church trips, school excursions, weddings, and corporate events.</p>
-                        <p class="text-primary mt-3 mb-0"><small>Includes professional driver &amp; fuel</small></p>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-6 mb-4">
-                    <div class="service-item bg-white text-center mb-2 py-5 px-4">
-                        <i class="fa fa-2x fa-shuttle-van mx-auto mb-4"></i>
-                        <h5 class="mb-2">Hiace Mini Bus</h5>
-                        <p class="m-0">Compact and versatile for smaller groups. Perfect for family trips, corporate outings, and city-to-city transfers. Easy to navigate through both city and rural roads.</p>
-                        <p class="text-primary mt-3 mb-0"><small>Includes professional driver &amp; fuel</small></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Fleet End -->
+    <!-- Search Widget End -->
 
 
     <!-- Why Us Start -->
@@ -240,48 +167,6 @@
 {% block extra_js %}
 <script>
 $(function() {
-    function updatePrice() {
-        var busType = $('#bus-type').val();
-        var tripType = $('input[name="trip_type"]:checked').val();
-        var days = parseInt($('#bus-days').val()) || 1;
-        var destinations = [];
-        $('.dest-checkbox:checked').each(function() {
-            destinations.push($(this).val());
-        });
-
-        if (busType && destinations.length > 0) {
-            $.ajax({
-                url: '/api/bus-price',
-                data: { bus_type: busType, trip_type: tripType, days: days, 'destinations[]': destinations },
-                success: function(data) {
-                    if (data.price) {
-                        $('#price-amount').text('GHS ' + data.price.toLocaleString());
-                        var breakdownHtml = '';
-                        data.breakdown.forEach(function(item) {
-                            breakdownHtml += '<span class="badge badge-light mr-1 mb-1 px-2 py-1">' + item.destination + ' <span class="text-primary">GHS ' + item.base_price.toLocaleString() + '</span></span> ';
-                        });
-                        if (tripType === 'round_trip') breakdownHtml += '<br><small class="text-muted">x2 (round trip)</small> ';
-                        if (days > 1) breakdownHtml += '<small class="text-muted">x' + days + ' days</small>';
-                        $('#price-breakdown').html(breakdownHtml);
-                        $('#price-display').slideDown(200);
-                    }
-                }
-            });
-        } else {
-            $('#price-display').slideUp(200);
-        }
-    }
-
-    // Show selected count
-    function updateSelectedCount() {
-        var count = $('.dest-checkbox:checked').length;
-        if (count > 0) {
-            $('#selected-destinations').html('<small class="text-primary"><i class="fa fa-check-circle mr-1"></i>' + count + ' destination' + (count > 1 ? 's' : '') + ' selected</small>');
-        } else {
-            $('#selected-destinations').html('');
-        }
-    }
-
     // Show/hide return date based on trip type
     function toggleReturnDate() {
         var tripType = $('input[name="trip_type"]:checked').val();
@@ -293,15 +178,16 @@ $(function() {
         }
     }
     toggleReturnDate();
+    $('input[name="trip_type"]').on('change', toggleReturnDate);
 
-    $('#bus-type, #bus-days, #pickup-point').on('change input', updatePrice);
-    $('input[name="trip_type"]').on('change', function() {
-        toggleReturnDate();
-        updatePrice();
-    });
+    // Show selected destination count
     $('.dest-checkbox').on('change', function() {
-        updateSelectedCount();
-        updatePrice();
+        var count = $('.dest-checkbox:checked').length;
+        if (count > 0) {
+            $('#selected-destinations').html('<small class="text-primary"><i class="fa fa-check-circle mr-1"></i>' + count + ' destination' + (count > 1 ? 's' : '') + ' selected</small>');
+        } else {
+            $('#selected-destinations').html('');
+        }
     });
 });
 </script>
