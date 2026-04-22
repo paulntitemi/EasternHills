@@ -28,7 +28,17 @@
       "Bash(curl -sS -L -o \"yutong.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Yutong_ZK6120R41.jpg/800px-Yutong_ZK6120R41.jpg\")",
       "Bash(curl -sS -L -o \"tourismo.jpg\" \"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Mercedes-Benz_Tourismo_%28O_350%29.jpg/800px-Mercedes-Benz_Tourismo_%28O_350%29.jpg\")",
       "Bash(python3 -c \" import json,sys try: data = json.load\\(sys.stdin\\) for r in data.get\\('results', []\\): urls = r.get\\('urls', {}\\) print\\(r.get\\('id',''\\), urls.get\\('small',''\\)\\) except: pass \")",
-      "WebFetch(domain:unsplash.com)"
+      "WebFetch(domain:unsplash.com)",
+      "Bash(npm install *)",
+      "Bash(nohup npm *)",
+      "Read(//tmp/**)",
+      "Bash(curl -sS http://localhost:5173/)",
+      "Bash(curl -sS -o /dev/null -w \"main.jsx: %{http_code}\\\\n\" \"http://localhost:5173/src/main.jsx\")",
+      "Bash(curl -sS -o /dev/null -w \"App.jsx: %{http_code}\\\\n\" \"http://localhost:5173/src/App.jsx\")",
+      "Bash(curl -sS -o /dev/null -w \"Dashboard: %{http_code}\\\\n\" \"http://localhost:5173/src/pages/Dashboard/Dashboard.jsx\")"
+    ],
+    "additionalDirectories": [
+      "/Users/tems/eHills New"
     ]
   }
 }
